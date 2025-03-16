@@ -1,17 +1,14 @@
-import fs from "node:fs";
-import { readdirSync } from "node:fs";
-import { ConvertFile } from "./converter";
-import { FileTree } from "./fileTree";
+import { StripFile } from "./Parse/converter";
 import { FindAllFilePaths } from "./filePath";
+import { Tokens } from "./Parse/tokens";
 
 //Find All Files
 const filePath: string = './src/hidden/';
 const allFilePaths: string[] = FindAllFilePaths(filePath);
 
 //map the file paths to the stripped contents
-const processedFiles = allFilePaths.map(filePath => ConvertFile(filePath));
-
-console.log(processedFiles);
+const whiteList: RegExp[] = Tokens.accessibilityModifiers;
+const processedFiles = allFilePaths.map(filePath => StripFile(filePath, whiteList));
 
 //create FileTree of inheritance
 
