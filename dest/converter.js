@@ -9,14 +9,13 @@ const whiteList = [
     /.*extends .*/,
     /.*implements .*/,
     /.*import .*/,
-    /.*@Override .*/
+    /.*@\w+.*/
 ];
 function ConvertFile(filePath) {
     const rawFile = (0, node_fs_1.readFileSync)(filePath, 'utf8');
     return StripFile(rawFile, whiteList);
 }
 function StripFile(file, whiteList) {
-    console.log(file);
     const lines = file
         .split('\n')
         .filter((line) => whiteList.some(regExp => regExp.test(line)));

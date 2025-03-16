@@ -7,7 +7,7 @@ const whiteList = [
     /.*extends .*/,
     /.*implements .*/,
     /.*import .*/,
-    /.*@Override .*/
+    /.*@\w+.*/
 ];
 
 export function ConvertFile(filePath: string): string[]
@@ -19,7 +19,6 @@ export function ConvertFile(filePath: string): string[]
 
 function StripFile(file: string, whiteList: RegExp[]): string[]
 {
-    console.log(file);
     const lines: string[] = file
         .split('\n')
         .filter((line) => whiteList.some(regExp => regExp.test(line)));

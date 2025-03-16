@@ -8,10 +8,5 @@ const allFilePaths = (0, filePath_1.FindAllFilePaths)(filePath);
 //map the file paths to the stripped contents
 const processedFiles = allFilePaths.map(filePath => (0, converter_1.ConvertFile)(filePath));
 console.log(processedFiles);
-processedFiles.forEach(file => {
-    file.forEach(line => {
-        console.log(line);
-    });
-});
 //create FileTree of inheritance
 //breadth-first the tree to store the data in the database
