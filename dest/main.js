@@ -1,9 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const node_fs_1 = require("node:fs");
-const allFiles = (0, node_fs_1.readdirSync)('./src/hidden/', { withFileTypes: true, recursive: true })
-    .filter(file => !file.isDirectory())
-    .map(file => file.name);
-allFiles.forEach(file => console.log(file));
-//Find all files
-//foreach file convert and store in data base
+const converter_1 = require("./converter");
+const filePath_1 = require("./filePath");
+//Find All Files
+const filePath = './src/hidden/';
+const allFilePaths = (0, filePath_1.FindAllFilePaths)(filePath);
+//map the file paths to the stripped contents
+const processedFiles = allFilePaths.map(filePath => (0, converter_1.ConvertFile)(filePath));
+console.log(processedFiles);
+processedFiles.forEach(file => {
+    file.forEach(line => {
+        console.log(line);
+    });
+});
+//create FileTree of inheritance
+//breadth-first the tree to store the data in the database
