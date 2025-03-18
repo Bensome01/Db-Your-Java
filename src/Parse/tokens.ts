@@ -1,101 +1,103 @@
-export class Tokens {
-    static readonly accessibilityModifiers: RegExp[] = [
-        /public/,
-        /protected/,
-        /private/
-    ];
+export const accessibilityModifiers: RegExp[] = [
+    /public/,
+    /protected/,
+    /private/
+];
 
-    static readonly loops: RegExp[] = [
-        /for/,
-        /while/,
-        /do/
-    ];
+export const inheritance: RegExp[] = [
+    /extends/,
+    /implements/
+]
 
-    static readonly nonAccessModifiers: RegExp[] = [
-        /static/,
-        /final/,
-        /abstract/,
-        /synchronized/,
-        /volatile/,
-        /transient/,
-        /native/
-    ];
+export const loops: RegExp[] = [
+    /for/,
+    /while/,
+    /do/
+];
 
-    static readonly genericAnnotation: RegExp[] = [
-        /@\w+/
-    ];
+export const nonAccessModifiers: RegExp[] = [
+    /static/,
+    /final/,
+    /abstract/,
+    /synchronized/,
+    /volatile/,
+    /transient/,
+    /native/
+];
 
-    static readonly annotations: RegExp[] = [
-        /@Override/,
-        /@SuppressWarnings/,
-        /@Deprecated/
-    ];
+export const genericAnnotation: RegExp[] = [
+    /@\w+/
+];
 
-    static readonly primitiveDataTypes: RegExp[] = [
-        /byte/,
-        /short/,
-        /int/,
-        /long/,
-        /float/,
-        /double/,
-        /boolean/,
-        /char/
-    ]
+export const annotations: RegExp[] = [
+    /@Override/,
+    /@SuppressWarnings/,
+    /@Deprecated/
+];
 
-    static readonly keywords: RegExp[] = [
-        /abstract/,
-        /assert/,
-        /boolean/,
-        /break/,
-        /byte/,
-        /case/,
-        /catch/,
-        /char/,
-        /class/,
-        /const/,
-        /continue/,
-        /default/,
-        /do/,
-        /double/,
-        /else/,
-        /enum/,
-        /extends/,
-        /final/,
-        /finally/,
-        /float/,
-        /for/,
-        /goto/,
-        /if/,
-        /implements/,
-        /import/,
-        /instanceof/,
-        /int/,
-        /interface/,
-        /long/,
-        /native/,
-        /new/,
-        /package/,
-        /private/,
-        /protected/,
-        /public/,
-        /return/,
-        /short/,
-        /static/,
-        /strictfp/,
-        /super/,
-        /super/,
-        /synchronised/,
-        /this/,
-        /throw/,
-        /throws/,
-        /transient/,
-        /try/,
-        /void/,
-        /volatile/,
-        /while/
-    ]
-}
+export const primitiveDataTypes: RegExp[] = [
+    /byte/,
+    /short/,
+    /int/,
+    /long/,
+    /float/,
+    /double/,
+    /boolean/,
+    /char/
+]
 
+export const keywords: RegExp[] = [
+    /abstract/,
+    /assert/,
+    /boolean/,
+    /break/,
+    /byte/,
+    /case/,
+    /catch/,
+    /char/,
+    /class/,
+    /const/,
+    /continue/,
+    /default/,
+    /do/,
+    /double/,
+    /else/,
+    /enum/,
+    /extends/,
+    /final/,
+    /finally/,
+    /float/,
+    /for/,
+    /goto/,
+    /if/,
+    /implements/,
+    /import/,
+    /instanceof/,
+    /int/,
+    /interface/,
+    /long/,
+    /native/,
+    /new/,
+    /package/,
+    /private/,
+    /protected/,
+    /public/,
+    /return/,
+    /short/,
+    /static/,
+    /strictfp/,
+    /super/,
+    /super/,
+    /synchronised/,
+    /this/,
+    /throw/,
+    /throws/,
+    /transient/,
+    /try/,
+    /void/,
+    /volatile/,
+    /while/
+]
 /*
  * tokenizer
  * lexer

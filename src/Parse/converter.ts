@@ -1,15 +1,39 @@
 import { readFileSync } from "node:fs";
+import { StringHas } from "./utils";
 
-export function StripFile(filePath: string, whiteList: RegExp[]): string[]
-{
+export const stripFileLines = (lines: string[], whiteList: RegExp[]): string[] => {
+    return lines.filter(line => whiteList.some(regex => regex.test(line)));
+};
+
+export const stripFile = (rawFile: string, whiteList: RegExp[]): string[] => {
+    const separatedFile: string[] = rawFile.split('\n');
+
+    return stripFileLines(separatedFile, whiteList);
+};
+
+export const stripFileFromPath = (filePath: string, whiteList: RegExp[]): string[] => {
     const rawFile: string = readFileSync(filePath, 'utf8');
 
-    const lines: string[] = rawFile
-        .split('\n')
-        .filter((line) => whiteList.some(regExp => regExp.test(line)));
+    return stripFile(rawFile, whiteList);
+};
 
-    return lines;
-}
+export const connectLines = (lines: string[], endings: RegExp[]): string[] => {
+    const connectedLines = lines.reduce((connectedLines, line) => {
+        const lastIndex = connectedLines.length - 1;
+        if (connectedLines.length == 0 || StringHas(connectedLines[lastIndex], endings))
+        {
+            connectedLines.push(line);
+        }
+        else 
+        {
+            connectedLines[lastIndex] = connectedLines[lastIndex] + " " + line;
+        }
+
+        return connectedLines;
+    }, [] as string[])
+
+    return connectedLines;
+};
 
 /*
  * intake file
