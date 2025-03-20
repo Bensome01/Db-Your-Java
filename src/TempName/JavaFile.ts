@@ -1,6 +1,6 @@
 import { connectLines, stripFileFromPath, stripFileLines } from "../Parse/converter";
 import { accessibilityModifiers, annotations, inheritance } from "../Parse/tokens";
-import { makeJavaClass, JavaClass } from "./JavaClass"
+import { makeJavaSchema, JavaSchema } from "./JavaSchema"
 
 const findFileName = (filePath: string): string => {
     const components: string[] = filePath.split('/');
@@ -11,7 +11,7 @@ export type JavaFile = {
     package: string;
     imports: string[];
     fileName: string;
-    fileClass: JavaClass;
+    fileClass: JavaSchema;
 };
 
 export const makeJavaFile = (filePath: string) => {
@@ -27,7 +27,7 @@ export const makeJavaFile = (filePath: string) => {
         package: stripFileLines(connectedFile, [/package/]),
         imports: connectedFile.filter(line => /import/.test(line)),
         fileName: findFileName(filePath),
-        fileClass: makeJavaClass(connectedFile)
+        fileClass: makeJavaSchema(connectedFile)
     };
 };
 
