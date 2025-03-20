@@ -1,4 +1,8 @@
-export default class JavaField
+export type JavaField = 
 {
+    //
+};
+
+export const makeJavaField = (tokens: string[]): JavaField => {
     //
 }

@@ -7,7 +7,10 @@ const tokens_1 = require("./Parse/tokens");
 const filePath = './src/hidden/';
 const allFilePaths = (0, filePath_1.FindAllFilePaths)(filePath);
 //map the file paths to the stripped contents
-const whiteList = tokens_1.Tokens.accessibilityModifiers;
-const processedFiles = allFilePaths.map(filePath => (0, converter_1.StripFile)(filePath, whiteList));
+const whiteList = tokens_1.accessibilityModifiers.concat([/{/, /import/]);
+const processedFiles = allFilePaths
+    .map(filePath => (0, converter_1.stripFile)(filePath, whiteList))
+    .map(file => (0, converter_1.connectLines)(file, [/{/, /;/]));
 //create FileTree of inheritance
+// const classLines: string[] = processedFiles.flatMap(file => )
 //breadth-first the tree to store the data in the database

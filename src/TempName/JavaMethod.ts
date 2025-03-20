@@ -1,4 +1,8 @@
-export default class JavaMethod
+export type JavaMethod =
 {
+    //
+}
+
+export const makeJavaMethod = (tokens: string[]): JavaMethod => {
     //
 }

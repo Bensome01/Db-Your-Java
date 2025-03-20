@@ -1,4 +1,9 @@
-export default class JavaConstructor
+export type JavaConstructor = 
 {
+    //
+};
+
+
+export const makeJavaConstructor = (tokens: string[]): JavaConstructor => {
     //
 }

@@ -1,4 +1,8 @@
-export default class JavaInterface
+export type JavaInterface =
 {
+    //
+}
+
+export const makeJavaInterface = (tokens: string[]): JavaInterface => {
     //
 }

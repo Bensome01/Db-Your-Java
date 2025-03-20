@@ -1,4 +1,4 @@
-import { stripFileFromPath, stripFileLines } from "../Parse/converter";
+import { connectLines, stripFileFromPath, stripFileLines } from "../Parse/converter";
 import { accessibilityModifiers, annotations, inheritance } from "../Parse/tokens";
 import { makeJavaClass, JavaClass } from "./JavaClass"
 
@@ -18,15 +18,16 @@ export const makeJavaFile = (filePath: string) => {
     const whiteList: RegExp[] = accessibilityModifiers
         .concat(annotations)
         .concat(inheritance)
-        .concat([/import/, /package/]);
+        .concat([/import/, /package/, /{/, /}/]);
 
     const strippedFile: string[] = stripFileFromPath(filePath, whiteList);
+    const connectedFile: string[] = connectLines(strippedFile, [/{/, /;/])
 
     return {
-        package: stripFileLines(strippedFile, [/package/]),
-        imports: strippedFile.filter(line => /import/.test(line)),
+        package: stripFileLines(connectedFile, [/package/]),
+        imports: connectedFile.filter(line => /import/.test(line)),
         fileName: findFileName(filePath),
-        fileClass: makeJavaClass(strippedFile)
+        fileClass: makeJavaClass(connectedFile)
     };
 };
 

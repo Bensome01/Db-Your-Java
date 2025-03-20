@@ -1,20 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Tokens = void 0;
-class Tokens {
-}
-exports.Tokens = Tokens;
-Tokens.accessibilityModifiers = [
+exports.keywords = exports.primitiveDataTypes = exports.annotations = exports.genericAnnotation = exports.nonAccessModifiers = exports.loops = exports.inheritance = exports.accessibilityModifiers = void 0;
+exports.accessibilityModifiers = [
     /public/,
     /protected/,
     /private/
 ];
-Tokens.loops = [
+exports.inheritance = [
+    /extends/,
+    /implements/
+];
+exports.loops = [
     /for/,
     /while/,
     /do/
 ];
-Tokens.nonAccessModifiers = [
+exports.nonAccessModifiers = [
     /static/,
     /final/,
     /abstract/,
@@ -23,15 +24,15 @@ Tokens.nonAccessModifiers = [
     /transient/,
     /native/
 ];
-Tokens.genericAnnotation = [
+exports.genericAnnotation = [
     /@\w+/
 ];
-Tokens.annotations = [
+exports.annotations = [
     /@Override/,
     /@SuppressWarnings/,
     /@Deprecated/
 ];
-Tokens.primitiveDataTypes = [
+exports.primitiveDataTypes = [
     /byte/,
     /short/,
     /int/,
@@ -41,7 +42,7 @@ Tokens.primitiveDataTypes = [
     /boolean/,
     /char/
 ];
-Tokens.keywords = [
+exports.keywords = [
     /abstract/,
     /assert/,
     /boolean/,
