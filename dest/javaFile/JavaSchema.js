@@ -26,7 +26,7 @@ const makeJavaSchema = (file) => {
             keyWords: findSchemaKeywords(mainSchema),
             parent: findParentClass(mainSchema),
             interfaces: findInterfaces(mainSchema),
-            fields: javaFields.map(line => (0, JavaField_1.makeJavaField)(line.tokens)), //implement
+            fields: javaFields.map(line => (0, JavaField_1.makeJavaField)(line.tokens)),
             constructors: [], //implement
             methods: [], //implement
             nestedClasses: nestedClassBounds
