@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.connectLines = exports.stripFileFromPath = exports.stripFile = exports.stripFileLines = void 0;
 const node_fs_1 = require("node:fs");
-const utils_1 = require("./utils");
 const stripFileLines = (lines, whiteList) => {
     return lines.filter(line => whiteList.some(regex => regex.test(line)));
 };
@@ -20,7 +19,7 @@ exports.stripFileFromPath = stripFileFromPath;
 const connectLines = (lines, endings) => {
     const connectedLines = lines.reduce((connectedLines, line) => {
         const lastIndex = connectedLines.length - 1;
-        if (connectedLines.length == 0 || (0, utils_1.stringHas)(connectedLines[lastIndex], endings)) {
+        if (connectedLines.length == 0 || endings.some(test => test.test(connectedLines[lastIndex]))) {
             connectedLines.push(line);
         }
         else {
