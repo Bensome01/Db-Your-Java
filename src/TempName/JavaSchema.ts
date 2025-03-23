@@ -1,5 +1,5 @@
 import { JavaConstructor } from "./JavaConstructor";
-import { JavaField } from "./JavaField"
+import { findJavaFields, JavaField, makeJavaField } from "./JavaField"
 import { JavaMethod } from "./JavaMethod";
 
 export type JavaSchema =
@@ -12,39 +12,56 @@ export type JavaSchema =
     constructors: JavaConstructor[];
     methods: JavaMethod[];
     nestedClasses: JavaSchema[];
-}
+};
+
+export type TokenizedLine = 
+{
+    tokens: string[];
+    index: number;
+};
 
 export const makeJavaSchema = (file: string[]): JavaSchema => {
-    const schemaDeclarations: { tokens: string[], index: number }[] = file
-        .map((l, i): { line: string, index: number } => {
-            return { line: l, index: i };
-        })
-        .filter(line => /class/.test(line.line) || /interface/)
-        .map((line): { tokens: string[], index: number } => {
-            return {tokens: line.line.split(' '), index: line.index}
-        })
-        .filter(line => line.tokens.some(token => token === "class" || token === "interface"));
-
-    const mainSchema: string[] = schemaDeclarations[0].tokens;
-
-    const nestedClassBounds: {start: number, end: number}[] = schemaDeclarations.slice(1)
-        .map((declarations): {start: number, end: number} => {
-            return { start: declarations.index , end: contentBounds(declarations.index, file)}
+    const tokenizedFile: TokenizedLine[] = file
+        .map((line, index): TokenizedLine => {
+            return { tokens: line.split(' '), index: index };
         });
 
-    const excludedContents = excludeNestedContent(file, nestedClassBounds);
+    const makeJavaSchema = (file: TokenizedLine[]): JavaSchema => {
+        const schemaDeclarations: TokenizedLine[] = file
+        .filter(line => line.tokens.some(token => token === "class" || token === "interface"));
 
-    return {
-        schemaName: findSchemaName(mainSchema),
-        keyWords: findSchemaKeywords(mainSchema),
-        parent: findParentClass(mainSchema),
-        interfaces: findInterfaces(mainSchema),
-        fields: [], //implement
-        constructors: [], //implement
-        methods: [], //implement
-        nestedClasses: nestedClassBounds
-            .map(classBounds => makeJavaSchema(file.slice(classBounds.start, classBounds.end + 1)))
+        const mainSchema: string[] = schemaDeclarations[0].tokens;
+
+        const schemaName = findSchemaName(mainSchema);
+
+        const nestedClassBounds: {start: number, end: number}[] = schemaDeclarations.slice(1)
+            .map((declarations): {start: number, end: number} => {
+                return { start: declarations.index , end: contentBounds(declarations.index, file)}
+            });
+
+        const excludeNestedClassContents: TokenizedLine[] = excludeContentInBounds(tokenizedFile, nestedClassBounds);
+        const javaFields: TokenizedLine[] = findJavaFields(excludeNestedClassContents);
+
+        const excludeJavaFields = excludeContentInBounds(excludeNestedClassContents,
+            javaFields.map(line => {
+                return {start: line.index, end: line.index};
+            }));
+
+        return {
+            schemaName: schemaName,
+            keyWords: findSchemaKeywords(mainSchema),
+            parent: findParentClass(mainSchema),
+            interfaces: findInterfaces(mainSchema),
+            fields: javaFields.map(line => makeJavaField(line.tokens)), //implement
+            constructors: [], //implement
+            methods: [], //implement
+            nestedClasses: nestedClassBounds
+                .map(classBounds => makeJavaSchema(file.slice(classBounds.start, classBounds.end + 1)))
+        };
+
     };
+
+    return makeJavaSchema(tokenizedFile);
 };
 
 const findSchemaName = (tokens: string[]): string => {
@@ -55,7 +72,7 @@ const findSchemaName = (tokens: string[]): string => {
 const findSchemaKeywords = (tokens: string[]): string[] => {
     const SchemaKeywordLocation: number = tokens.findIndex(token => token === "class" || token === "interface");
     return tokens.slice(0, SchemaKeywordLocation - 1);
-}
+};
 
 const findParentClass = (tokens: string[]): string | undefined => {
     const extendsLocation: number = tokens.findIndex(token => token === "extends");
@@ -87,35 +104,35 @@ const findInterfaces = (tokens: string[]): string[] => {
     return interfaces;
 };
 
-const contentBounds = (start: number, file: string[]): number => {
+const contentBounds = (start: number, file: TokenizedLine[]): number => {
     return file
-        .map((line, index): [string, number] => [line, index])
-        .reduce((end: number, line: [string, number]): number => {
-        if (line[1] <= end)
+        .reduce((end: number, line: TokenizedLine): number => {
+        if (line.index <= end)
         {
             return end;
         }
 
-        if (/{/.test(line[0]))
+        if (line.tokens.some(token => token === "{"))
         {
-            return contentBounds(line[1], file);
+            return contentBounds(line.index, file);
         }
 
-        if (/}/.test(line[0]))
+        if (line.tokens.some(token => token === "}"))
         {
-            return line[1];
+            return line.index;
         }
 
         return end;
     }, start)
-}
+};
 
-const excludeNestedContent = (file: string[], nestedClassBounds: {start: number, end: number}[]): string[] => {
-    const inRangeInclusive = (start: number, end: number, num: number): boolean => {
-        return start <= num && num <= end;
+const excludeContentInBounds = (file: TokenizedLine[], contentBounds: {start: number, end: number}[])
+    : TokenizedLine[] => {
+        const inRangeInclusive = (start: number, end: number, num: number): boolean => {
+            return start <= num && num <= end;
+        };
+
+        return file
+            .filter((line) => !contentBounds
+                .some(bounds => inRangeInclusive(bounds.start, bounds.end, line.index)))
     };
-
-    return file
-        .filter((line, index) => !nestedClassBounds
-            .some(bounds => inRangeInclusive(bounds.start, bounds.end, index)))
-}
