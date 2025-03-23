@@ -52,7 +52,7 @@ export const makeJavaSchema = (file: string[]): JavaSchema => {
             keyWords: findSchemaKeywords(mainSchema),
             parent: findParentClass(mainSchema),
             interfaces: findInterfaces(mainSchema),
-            fields: javaFields.map(line => makeJavaField(line.tokens)), //implement
+            fields: javaFields.map(line => makeJavaField(line.tokens)),
             constructors: [], //implement
             methods: [], //implement
             nestedClasses: nestedClassBounds
