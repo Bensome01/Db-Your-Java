@@ -1,13 +1,12 @@
 import { readdirSync } from "node:fs";
 
-export function FindAllFilePaths(filePath: string): string[]
-{
+export const findAllFilePaths = (filePath: string): string[] => {
     const folderContents = readdirSync(filePath, { withFileTypes: true });
 
     const filePaths: string[] = folderContents.flatMap(content => {
         if (content.isDirectory())
         {
-            return FindAllFilePaths(filePath + content.name + "/");
+            return findAllFilePaths(filePath + content.name + "/");
         }
         return filePath + content.name;
     });
