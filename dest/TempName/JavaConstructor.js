@@ -1,5 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class JavaConstructor {
-}
-exports.default = JavaConstructor;
+exports.makeJavaConstructor = void 0;
+const makeJavaConstructor = (tokens) => {
+    return {};
+};
+exports.makeJavaConstructor = makeJavaConstructor;

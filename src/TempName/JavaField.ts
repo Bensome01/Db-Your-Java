@@ -6,7 +6,7 @@ export type JavaField =
 };
 
 export const makeJavaField = (tokens: string[]): JavaField => {
-    //
+    return {};
 }
 
 export const findJavaFields = (file: TokenizedLine[]): TokenizedLine[] => {

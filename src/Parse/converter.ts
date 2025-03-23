@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { StringHas } from "./utils";
+import { stringHas } from "./utils";
 
 export const stripFileLines = (lines: string[], whiteList: RegExp[]): string[] => {
     return lines.filter(line => whiteList.some(regex => regex.test(line)));
@@ -20,11 +20,11 @@ export const stripFileFromPath = (filePath: string, whiteList: RegExp[]): string
 export const connectLines = (lines: string[], endings: RegExp[]): string[] => {
     const connectedLines = lines.reduce((connectedLines, line) => {
         const lastIndex = connectedLines.length - 1;
-        if (connectedLines.length == 0 || StringHas(connectedLines[lastIndex], endings))
+        if (connectedLines.length == 0 || stringHas(connectedLines[lastIndex], endings))
         {
             connectedLines.push(line);
         }
-        else 
+        else
         {
             connectedLines[lastIndex] = connectedLines[lastIndex] + " " + line;
         }

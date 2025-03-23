@@ -5,7 +5,7 @@ const filePath_1 = require("./filePath");
 const tokens_1 = require("./Parse/tokens");
 //Find All Files
 const filePath = './src/hidden/';
-const allFilePaths = (0, filePath_1.FindAllFilePaths)(filePath);
+const allFilePaths = (0, filePath_1.findAllFilePaths)(filePath);
 //map the file paths to the stripped contents
 const whiteList = tokens_1.accessibilityModifiers.concat([/{/, /import/]);
 const processedFiles = allFilePaths

@@ -20,7 +20,7 @@ exports.stripFileFromPath = stripFileFromPath;
 const connectLines = (lines, endings) => {
     const connectedLines = lines.reduce((connectedLines, line) => {
         const lastIndex = connectedLines.length - 1;
-        if (connectedLines.length == 0 || (0, utils_1.StringHas)(connectedLines[lastIndex], endings)) {
+        if (connectedLines.length == 0 || (0, utils_1.stringHas)(connectedLines[lastIndex], endings)) {
             connectedLines.push(line);
         }
         else {

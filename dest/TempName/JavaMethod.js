@@ -1,5 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class JavaMethod {
-}
-exports.default = JavaMethod;
+exports.makeJavaMethod = void 0;
+const makeJavaMethod = (tokens) => {
+    return {};
+};
+exports.makeJavaMethod = makeJavaMethod;
