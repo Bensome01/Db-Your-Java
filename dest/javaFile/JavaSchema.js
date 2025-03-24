@@ -17,7 +17,7 @@ const makeJavaSchema = (file) => {
             .map((declarations) => {
             return { start: declarations.index, end: contentBounds(declarations.index, file) };
         });
-        const excludeNestedClassContents = excludeContentInBounds(tokenizedFile, nestedClassBounds);
+        const excludeNestedClassContents = excludeContentInBounds(file, nestedClassBounds);
         const javaFields = (0, JavaField_1.findJavaFields)(excludeNestedClassContents);
         const excludeJavaFields = excludeContentInBounds(excludeNestedClassContents, javaFields.map(line => {
             return { start: line.index, end: line.index };
@@ -40,7 +40,9 @@ const makeJavaSchema = (file) => {
                 .map(classBounds => makeJavaSchema(file.slice(classBounds.start, classBounds.end + 1)))
         };
     };
-    return makeJavaSchema(tokenizedFile);
+    return makeJavaSchema(tokenizedFile
+        .filter(line => !line.tokens
+        .some(token => token === "package" || token === "import")));
 };
 exports.makeJavaSchema = makeJavaSchema;
 const findSchemaName = (tokens) => {
