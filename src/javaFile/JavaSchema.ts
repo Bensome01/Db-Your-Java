@@ -1,7 +1,7 @@
 import { TokenizedLine, tokenizeLine } from "../Parse/tokenizedLine";
-import { JavaConstructor } from "./JavaConstructor";
+import { findConstructors, JavaConstructor, makeJavaConstructor } from "./JavaConstructor";
 import { findJavaFields, JavaField, makeJavaField } from "./JavaField"
-import { JavaMethod } from "./JavaMethod";
+import { JavaMethod, separateMethodFromParameter } from "./JavaMethod";
 
 export type JavaSchema =
 {
@@ -35,10 +35,13 @@ export const makeJavaSchema = (file: string[]): JavaSchema => {
         const excludeNestedClassContents: TokenizedLine[] = excludeContentInBounds(tokenizedFile, nestedClassBounds);
         const javaFields: TokenizedLine[] = findJavaFields(excludeNestedClassContents);
 
-        const excludeJavaFields = excludeContentInBounds(excludeNestedClassContents,
+        const excludeJavaFields: TokenizedLine[] = excludeContentInBounds(excludeNestedClassContents,
             javaFields.map(line => {
                 return {start: line.index, end: line.index};
-            }));
+            }))
+            .map(line => separateMethodFromParameter(line));
+
+        const javaConstructors: TokenizedLine[] = findConstructors(excludeJavaFields, schemaName);
 
         return {
             schemaName: schemaName,
@@ -46,7 +49,7 @@ export const makeJavaSchema = (file: string[]): JavaSchema => {
             parent: findParentClass(mainSchema),
             interfaces: findInterfaces(mainSchema),
             fields: javaFields.map(line => makeJavaField(line.tokens)),
-            constructors: [], //implement
+            constructors: javaConstructors.map(constructor => makeJavaConstructor(constructor.tokens)),
             methods: [], //implement
             nestedClasses: nestedClassBounds
                 .map(classBounds => makeJavaSchema(file.slice(classBounds.start, classBounds.end + 1)))

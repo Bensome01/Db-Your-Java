@@ -2,7 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.makeJavaSchema = void 0;
 const tokenizedLine_1 = require("../Parse/tokenizedLine");
+const JavaConstructor_1 = require("./JavaConstructor");
 const JavaField_1 = require("./JavaField");
+const JavaMethod_1 = require("./JavaMethod");
 const makeJavaSchema = (file) => {
     const tokenizedFile = file
         .map((line, index) => (0, tokenizedLine_1.tokenizeLine)(line, index));
@@ -19,14 +21,16 @@ const makeJavaSchema = (file) => {
         const javaFields = (0, JavaField_1.findJavaFields)(excludeNestedClassContents);
         const excludeJavaFields = excludeContentInBounds(excludeNestedClassContents, javaFields.map(line => {
             return { start: line.index, end: line.index };
-        }));
+        }))
+            .map(line => (0, JavaMethod_1.separateMethodFromParameter)(line));
+        const javaConstructors = (0, JavaConstructor_1.findConstructors)(excludeJavaFields, schemaName);
         return {
             schemaName: schemaName,
             keyWords: findSchemaKeywords(mainSchema),
             parent: findParentClass(mainSchema),
             interfaces: findInterfaces(mainSchema),
             fields: javaFields.map(line => (0, JavaField_1.makeJavaField)(line.tokens)),
-            constructors: [], //implement
+            constructors: javaConstructors.map(constructor => (0, JavaConstructor_1.makeJavaConstructor)(constructor.tokens)),
             methods: [], //implement
             nestedClasses: nestedClassBounds
                 .map(classBounds => makeJavaSchema(file.slice(classBounds.start, classBounds.end + 1)))
