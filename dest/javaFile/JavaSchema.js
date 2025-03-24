@@ -24,6 +24,10 @@ const makeJavaSchema = (file) => {
         }))
             .map(line => (0, JavaMethod_1.separateMethodFromParameter)(line));
         const javaConstructors = (0, JavaConstructor_1.findConstructors)(excludeJavaFields, schemaName);
+        const excludeJavaConstructors = excludeContentInBounds(excludeJavaFields, javaConstructors.map(line => {
+            return { start: line.index, end: line.index };
+        }));
+        const javaMethods = excludeJavaConstructors;
         return {
             schemaName: schemaName,
             keyWords: findSchemaKeywords(mainSchema),
@@ -31,7 +35,7 @@ const makeJavaSchema = (file) => {
             interfaces: findInterfaces(mainSchema),
             fields: javaFields.map(line => (0, JavaField_1.makeJavaField)(line.tokens)),
             constructors: javaConstructors.map(constructor => (0, JavaConstructor_1.makeJavaConstructor)(constructor.tokens)),
-            methods: [], //implement
+            methods: javaMethods.map(method => (0, JavaMethod_1.makeJavaMethod)(method.tokens)),
             nestedClasses: nestedClassBounds
                 .map(classBounds => makeJavaSchema(file.slice(classBounds.start, classBounds.end + 1)))
         };
