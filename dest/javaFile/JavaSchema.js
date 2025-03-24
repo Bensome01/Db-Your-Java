@@ -49,7 +49,7 @@ const findSchemaName = (tokens) => {
 };
 const findSchemaKeywords = (tokens) => {
     const SchemaKeywordLocation = tokens.findIndex(token => token === "class" || token === "interface");
-    return tokens.slice(0, SchemaKeywordLocation - 1);
+    return tokens.slice(0, SchemaKeywordLocation);
 };
 const findParentClass = (tokens) => {
     const extendsLocation = tokens.findIndex(token => token === "extends");

@@ -73,7 +73,7 @@ const findSchemaName = (tokens: string[]): string => {
 
 const findSchemaKeywords = (tokens: string[]): string[] => {
     const SchemaKeywordLocation: number = tokens.findIndex(token => token === "class" || token === "interface");
-    return tokens.slice(0, SchemaKeywordLocation - 1);
+    return tokens.slice(0, SchemaKeywordLocation);
 };
 
 const findParentClass = (tokens: string[]): string | undefined => {
