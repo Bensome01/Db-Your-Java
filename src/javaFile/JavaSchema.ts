@@ -15,55 +15,48 @@ export type JavaSchema =
     nestedClasses: JavaSchema[];
 };
 
-export const makeJavaSchema = (file: string[]): JavaSchema => {
-    const tokenizedFile: TokenizedLine[] = file
-        .map((line, index): TokenizedLine => tokenizeLine(line, index));
+export const makeJavaSchema = (file: TokenizedLine[]): JavaSchema => {
+    const schemaDeclarations: TokenizedLine[] = file
+    .filter(line => line.tokens.some(token => token === "class" || token === "interface"));
 
-    const makeJavaSchema = (file: TokenizedLine[]): JavaSchema => {
-        const schemaDeclarations: TokenizedLine[] = file
-        .filter(line => line.tokens.some(token => token === "class" || token === "interface"));
+    const mainSchema: string[] = schemaDeclarations[0].tokens;
 
-        const mainSchema: string[] = schemaDeclarations[0].tokens;
+    const schemaName = findSchemaName(mainSchema);
 
-        const schemaName = findSchemaName(mainSchema);
+    const nestedClassBounds: {start: number, end: number}[] = schemaDeclarations.slice(1)
+        .map((declarations): {start: number, end: number} => {
+            return { start: declarations.index , end: contentBounds(declarations.index, file)}
+        });
 
-        const nestedClassBounds: {start: number, end: number}[] = schemaDeclarations.slice(1)
-            .map((declarations): {start: number, end: number} => {
-                return { start: declarations.index , end: contentBounds(declarations.index, file)}
-            });
+    const excludeNestedClassContents: TokenizedLine[] = excludeContentInBounds(file, nestedClassBounds);
+    const javaFields: TokenizedLine[] = findJavaFields(excludeNestedClassContents);
 
-        const excludeNestedClassContents: TokenizedLine[] = excludeContentInBounds(file, nestedClassBounds);
-        const javaFields: TokenizedLine[] = findJavaFields(excludeNestedClassContents);
+    const excludeJavaFields: TokenizedLine[] = excludeContentInBounds(excludeNestedClassContents,
+        javaFields.map(line => {
+            return {start: line.index, end: line.index};
+        }))
+        .map(line => separateMethodFromParameter(line));
 
-        const excludeJavaFields: TokenizedLine[] = excludeContentInBounds(excludeNestedClassContents,
-            javaFields.map(line => {
-                return {start: line.index, end: line.index};
-            }))
-            .map(line => separateMethodFromParameter(line));
+    const javaConstructors: TokenizedLine[] = findConstructors(excludeJavaFields, schemaName);
 
-        const javaConstructors: TokenizedLine[] = findConstructors(excludeJavaFields, schemaName);
+    const excludeJavaConstructors: TokenizedLine[] = excludeContentInBounds(excludeJavaFields, javaConstructors.map(line => {
+        return { start: line.index, end: line.index };
+    }));
 
-        const excludeJavaConstructors: TokenizedLine[] = excludeContentInBounds(excludeJavaFields, javaConstructors.map(line => {
-            return { start: line.index, end: line.index };
-        }));
+    const javaMethods: TokenizedLine[] = excludeJavaConstructors;
 
-        const javaMethods: TokenizedLine[] = excludeJavaConstructors;
-
-        return {
-            schemaName: schemaName,
-            keyWords: findSchemaKeywords(mainSchema),
-            parent: findParentClass(mainSchema),
-            interfaces: findInterfaces(mainSchema),
-            fields: javaFields.map(line => makeJavaField(line.tokens)),
-            constructors: javaConstructors.map(constructor => makeJavaConstructor(constructor.tokens)),
-            methods: javaMethods.map(method => makeJavaMethod(method.tokens)),
-            nestedClasses: nestedClassBounds
-                .map(classBounds => makeJavaSchema(file.slice(classBounds.start, classBounds.end + 1)))
-        };
-
+    return {
+        schemaName: schemaName,
+        keyWords: findSchemaKeywords(mainSchema),
+        parent: findParentClass(mainSchema),
+        interfaces: findInterfaces(mainSchema),
+        fields: javaFields.map(line => makeJavaField(line.tokens)),
+        constructors: javaConstructors.map(constructor => makeJavaConstructor(constructor.tokens)),
+        methods: javaMethods.map(method => makeJavaMethod(method.tokens)),
+        nestedClasses: nestedClassBounds
+            .map(classBounds => makeJavaSchema(file.slice(classBounds.start, classBounds.end + 1)))
     };
 
-    return makeJavaSchema(tokenizedFile);
 };
 
 const findSchemaName = (tokens: string[]): string => {
