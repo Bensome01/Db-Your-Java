@@ -6,7 +6,7 @@ const makeJavaField = (tokens) => {
     tokens.forEach(token => mutableTokens.push(token));
     const fieldName = mutableTokens.pop();
     const fieldType = mutableTokens.pop();
-    return { fieldName: fieldName, fieldType: fieldType, keywords: tokens };
+    return { fieldName: fieldName, fieldType: fieldType, keywords: mutableTokens };
 };
 exports.makeJavaField = makeJavaField;
 const findJavaFields = (file) => {

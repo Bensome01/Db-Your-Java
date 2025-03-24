@@ -13,7 +13,7 @@ export const makeJavaField = (tokens: string[]): JavaField => {
     const fieldName: string = mutableTokens.pop()!;
     const fieldType: string = mutableTokens.pop()!;
 
-    return {fieldName: fieldName, fieldType: fieldType, keywords: tokens};
+    return {fieldName: fieldName, fieldType: fieldType, keywords: mutableTokens};
 }
 
 export const findJavaFields = (file: TokenizedLine[]): TokenizedLine[] => {
