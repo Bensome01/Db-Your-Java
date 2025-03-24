@@ -44,7 +44,7 @@ const makeJavaSchema = (file) => {
 };
 exports.makeJavaSchema = makeJavaSchema;
 const findSchemaName = (tokens) => {
-    const SchemaKeywordLocation = tokens.findIndex(token => token === "class" || "interface");
+    const SchemaKeywordLocation = tokens.findIndex(token => token === "class" || token === "interface");
     return tokens[SchemaKeywordLocation + 1];
 };
 const findSchemaKeywords = (tokens) => {

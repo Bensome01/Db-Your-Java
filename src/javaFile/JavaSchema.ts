@@ -67,7 +67,7 @@ export const makeJavaSchema = (file: string[]): JavaSchema => {
 };
 
 const findSchemaName = (tokens: string[]): string => {
-    const SchemaKeywordLocation: number = tokens.findIndex(token => token === "class" || "interface");
+    const SchemaKeywordLocation: number = tokens.findIndex(token => token === "class" || token === "interface");
     return tokens[SchemaKeywordLocation + 1];
 };
 
