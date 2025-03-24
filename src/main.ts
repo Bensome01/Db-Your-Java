@@ -16,7 +16,7 @@ const allFilePaths: string[] = findAllFilePaths(filePath);
 const test: JavaFile = makeJavaFile(allFilePaths[0]);
 
 console.log(getFullyQualifiedName(test));
-console.log(test);
+console.log(test.fileClass);
 
 
 //create FileTree of inheritance
