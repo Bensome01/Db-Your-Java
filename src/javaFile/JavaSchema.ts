@@ -19,16 +19,18 @@ export const makeJavaSchema = (file: TokenizedLine[]): JavaSchema => {
     const schemaDeclarations: TokenizedLine[] = file
     .filter(line => line.tokens.some(token => token === "class" || token === "interface"));
 
-    const mainSchema: string[] = schemaDeclarations[0].tokens;
+    const mainSchema: TokenizedLine = schemaDeclarations[0];
 
-    const schemaName = findSchemaName(mainSchema);
+    const schemaName = findSchemaName(mainSchema.tokens);
+
+    const mainSchemaContents = file.slice(1, -1);
 
     const nestedClassBounds: {start: number, end: number}[] = schemaDeclarations.slice(1)
         .map((declarations): {start: number, end: number} => {
-            return { start: declarations.index , end: contentBounds(declarations.index, file)}
+            return { start: declarations.index , end: contentBounds(declarations.index, mainSchemaContents)}
         });
 
-    const excludeNestedClassContents: TokenizedLine[] = excludeContentInBounds(file, nestedClassBounds);
+    const excludeNestedClassContents: TokenizedLine[] = excludeContentInBounds(mainSchemaContents, nestedClassBounds);
     const javaFields: TokenizedLine[] = findJavaFields(excludeNestedClassContents);
 
     const excludeJavaFields: TokenizedLine[] = excludeContentInBounds(excludeNestedClassContents,
@@ -47,14 +49,14 @@ export const makeJavaSchema = (file: TokenizedLine[]): JavaSchema => {
 
     return {
         schemaName: schemaName,
-        keyWords: findSchemaKeywords(mainSchema),
-        parent: findParentClass(mainSchema),
-        interfaces: findInterfaces(mainSchema),
+        keyWords: findSchemaKeywords(mainSchema.tokens),
+        parent: findParentClass(mainSchema.tokens),
+        interfaces: findInterfaces(mainSchema.tokens),
         fields: javaFields.map(line => makeJavaField(line.tokens)),
         constructors: javaConstructors.map(constructor => makeJavaConstructor(constructor.tokens)),
         methods: javaMethods.map(method => makeJavaMethod(method.tokens)),
         nestedClasses: nestedClassBounds
-            .map(classBounds => makeJavaSchema(file.slice(classBounds.start, classBounds.end + 1)))
+            .map(classBounds => makeJavaSchema(mainSchemaContents.slice(classBounds.start, classBounds.end + 1)))
     };
 
 };

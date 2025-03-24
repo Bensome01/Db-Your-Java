@@ -7,13 +7,14 @@ const JavaMethod_1 = require("./JavaMethod");
 const makeJavaSchema = (file) => {
     const schemaDeclarations = file
         .filter(line => line.tokens.some(token => token === "class" || token === "interface"));
-    const mainSchema = schemaDeclarations[0].tokens;
-    const schemaName = findSchemaName(mainSchema);
+    const mainSchema = schemaDeclarations[0];
+    const schemaName = findSchemaName(mainSchema.tokens);
+    const mainSchemaContents = file.slice(1, -1);
     const nestedClassBounds = schemaDeclarations.slice(1)
         .map((declarations) => {
-        return { start: declarations.index, end: contentBounds(declarations.index, file) };
+        return { start: declarations.index, end: contentBounds(declarations.index, mainSchemaContents) };
     });
-    const excludeNestedClassContents = excludeContentInBounds(file, nestedClassBounds);
+    const excludeNestedClassContents = excludeContentInBounds(mainSchemaContents, nestedClassBounds);
     const javaFields = (0, JavaField_1.findJavaFields)(excludeNestedClassContents);
     const excludeJavaFields = excludeContentInBounds(excludeNestedClassContents, javaFields.map(line => {
         return { start: line.index, end: line.index };
@@ -26,14 +27,14 @@ const makeJavaSchema = (file) => {
     const javaMethods = excludeJavaConstructors;
     return {
         schemaName: schemaName,
-        keyWords: findSchemaKeywords(mainSchema),
-        parent: findParentClass(mainSchema),
-        interfaces: findInterfaces(mainSchema),
+        keyWords: findSchemaKeywords(mainSchema.tokens),
+        parent: findParentClass(mainSchema.tokens),
+        interfaces: findInterfaces(mainSchema.tokens),
         fields: javaFields.map(line => (0, JavaField_1.makeJavaField)(line.tokens)),
         constructors: javaConstructors.map(constructor => (0, JavaConstructor_1.makeJavaConstructor)(constructor.tokens)),
         methods: javaMethods.map(method => (0, JavaMethod_1.makeJavaMethod)(method.tokens)),
         nestedClasses: nestedClassBounds
-            .map(classBounds => (0, exports.makeJavaSchema)(file.slice(classBounds.start, classBounds.end + 1)))
+            .map(classBounds => (0, exports.makeJavaSchema)(mainSchemaContents.slice(classBounds.start, classBounds.end + 1)))
     };
 };
 exports.makeJavaSchema = makeJavaSchema;
