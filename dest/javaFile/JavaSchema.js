@@ -1,12 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.makeJavaSchema = void 0;
+const tokenizedLine_1 = require("../Parse/tokenizedLine");
 const JavaField_1 = require("./JavaField");
 const makeJavaSchema = (file) => {
     const tokenizedFile = file
-        .map((line, index) => {
-        return { tokens: line.split(' '), index: index };
-    });
+        .map((line, index) => (0, tokenizedLine_1.tokenizeLine)(line, index));
     const makeJavaSchema = (file) => {
         const schemaDeclarations = file
             .filter(line => line.tokens.some(token => token === "class" || token === "interface"));

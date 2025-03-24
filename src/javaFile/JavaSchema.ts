@@ -1,3 +1,4 @@
+import { TokenizedLine, tokenizeLine } from "../Parse/tokenizedLine";
 import { JavaConstructor } from "./JavaConstructor";
 import { findJavaFields, JavaField, makeJavaField } from "./JavaField"
 import { JavaMethod } from "./JavaMethod";
@@ -14,17 +15,9 @@ export type JavaSchema =
     nestedClasses: JavaSchema[];
 };
 
-export type TokenizedLine = 
-{
-    tokens: string[];
-    index: number;
-};
-
 export const makeJavaSchema = (file: string[]): JavaSchema => {
     const tokenizedFile: TokenizedLine[] = file
-        .map((line, index): TokenizedLine => {
-            return { tokens: line.split(' '), index: index };
-        });
+        .map((line, index): TokenizedLine => tokenizeLine(line, index));
 
     const makeJavaSchema = (file: TokenizedLine[]): JavaSchema => {
         const schemaDeclarations: TokenizedLine[] = file

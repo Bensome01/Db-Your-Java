@@ -1,3 +1,14 @@
+export const combineRegexes = (regexes: RegExp[]): string => {
+    return regexes.reduce((combined, regex): string => {
+        if (combined.length == 0)
+        {
+            return regex.source;
+        }
+    
+        return combined + "|" + regex.source;
+    }, "")
+}
+
 export const accessibilityModifiers: RegExp[] = [
     /public/,
     /protected/,
@@ -45,6 +56,22 @@ export const primitiveDataTypes: RegExp[] = [
     /boolean/,
     /char/
 ]
+
+export const beginningContainers: RegExp[] = [
+    /</,
+    /\(/,
+    /{/,
+    /\[/
+]
+
+export const endingContainers: RegExp[] = [
+    />/,
+    /\)/,
+    /}/,
+    /\]/
+]
+
+export const containers: RegExp[] = beginningContainers.concat(endingContainers);
 
 export const keywords: RegExp[] = [
     /abstract/,

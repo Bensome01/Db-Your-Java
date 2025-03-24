@@ -6,13 +6,6 @@ const makeJavaField = (tokens) => {
 };
 exports.makeJavaField = makeJavaField;
 const findJavaFields = (file) => {
-    const excludeEqualsSign = file.map(line => {
-        const equalIndex = line.tokens.findIndex(token => token === "=");
-        if (equalIndex != -1) {
-            return { tokens: line.tokens.slice(0, equalIndex), index: line.index };
-        }
-        return line;
-    });
-    return excludeEqualsSign.filter(line => !line.tokens.some(token => /\(/.test(token)));
+    return file.filter(line => !line.tokens.some(token => /\(/.test(token)));
 };
 exports.findJavaFields = findJavaFields;

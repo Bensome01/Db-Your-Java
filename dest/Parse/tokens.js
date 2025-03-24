@@ -1,6 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.keywords = exports.primitiveDataTypes = exports.annotations = exports.genericAnnotation = exports.nonAccessModifiers = exports.loops = exports.inheritance = exports.accessibilityModifiers = void 0;
+exports.keywords = exports.containers = exports.endingContainers = exports.beginningContainers = exports.primitiveDataTypes = exports.annotations = exports.genericAnnotation = exports.nonAccessModifiers = exports.loops = exports.inheritance = exports.accessibilityModifiers = exports.combineRegexes = void 0;
+const combineRegexes = (regexes) => {
+    return regexes.reduce((combined, regex) => {
+        if (combined.length == 0) {
+            return regex.source;
+        }
+        return combined + "|" + regex.source;
+    }, "");
+};
+exports.combineRegexes = combineRegexes;
 exports.accessibilityModifiers = [
     /public/,
     /protected/,
@@ -42,6 +51,19 @@ exports.primitiveDataTypes = [
     /boolean/,
     /char/
 ];
+exports.beginningContainers = [
+    /</,
+    /\(/,
+    /{/,
+    /\[/
+];
+exports.endingContainers = [
+    />/,
+    /\)/,
+    /}/,
+    /\]/
+];
+exports.containers = exports.beginningContainers.concat(exports.endingContainers);
 exports.keywords = [
     /abstract/,
     /assert/,
