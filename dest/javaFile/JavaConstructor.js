@@ -2,10 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.findConstructors = exports.makeJavaConstructor = void 0;
 const makeJavaConstructor = (tokens) => {
-    return {};
+    const mutableTokens = [];
+    tokens.forEach(token => mutableTokens.push(token));
+    const parameters = mutableTokens.pop()
+        .split(/\(|,|\)/)
+        .filter(param => param !== "");
+    const constructorName = mutableTokens.pop();
+    return { keywords: mutableTokens, parameters: parameters };
 };
 exports.makeJavaConstructor = makeJavaConstructor;
 const findConstructors = (file, className) => {
-    return [];
+    return file.filter(line => line.tokens.some(token => token === className));
 };
 exports.findConstructors = findConstructors;
