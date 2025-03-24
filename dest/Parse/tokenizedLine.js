@@ -9,11 +9,12 @@ const tokenizeLine = (line, index) => {
 };
 exports.tokenizeLine = tokenizeLine;
 const trimTokens = (tokens) => {
-    const equalsIndex = tokens.findIndex(token => token === "=");
+    const removedWhiteSpace = tokens.filter(token => token !== "");
+    const equalsIndex = removedWhiteSpace.findIndex(token => token === "=");
     if (equalsIndex === -1) {
-        return tokens;
+        return removedWhiteSpace;
     }
-    return tokens.slice(0, equalsIndex);
+    return removedWhiteSpace.slice(0, equalsIndex);
 };
 const reconnectTokens = (tokens) => {
     const combinedbeginnings = (0, tokens_1.combineRegexes)(tokens_1.beginningContainers);

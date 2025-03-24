@@ -14,14 +14,15 @@ export const tokenizeLine = (line: string, index: number): TokenizedLine => {
 }
 
 const trimTokens = (tokens: string[]): string[] => {
-    const equalsIndex: number = tokens.findIndex(token => token === "=");
+    const removedWhiteSpace: string[] = tokens.filter(token => token !== "");
+    const equalsIndex: number = removedWhiteSpace.findIndex(token => token === "=");
 
     if (equalsIndex === -1)
     {
-        return tokens;
+        return removedWhiteSpace;
     }
 
-    return tokens.slice(0, equalsIndex);
+    return removedWhiteSpace.slice(0, equalsIndex);
 }
 
 const reconnectTokens = (tokens: string[]): string[] => {
