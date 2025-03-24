@@ -16,7 +16,6 @@ export type JavaFile = {
 
 export const makeJavaFile = (filePath: string) => {
     const whiteList: RegExp[] = accessibilityModifiers
-        .concat(annotations)
         .concat(inheritance)
         .concat([/import/, /package/, /{/, /}/]);
 

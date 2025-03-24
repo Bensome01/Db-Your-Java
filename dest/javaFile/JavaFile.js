@@ -10,7 +10,6 @@ const findFileName = (filePath) => {
 };
 const makeJavaFile = (filePath) => {
     const whiteList = tokens_1.accessibilityModifiers
-        .concat(tokens_1.annotations)
         .concat(tokens_1.inheritance)
         .concat([/import/, /package/, /{/, /}/]);
     const strippedFile = (0, converter_1.stripFileFromPath)(filePath, whiteList);
