@@ -39,7 +39,9 @@ exports.genericAnnotation = [
 exports.annotations = [
     /@Override/,
     /@SuppressWarnings/,
-    /@Deprecated/
+    /@Deprecated/,
+    /@Safevarargs/,
+    /@FunctionalInterface/
 ];
 exports.primitiveDataTypes = [
     /byte/,

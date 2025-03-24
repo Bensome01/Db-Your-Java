@@ -43,7 +43,9 @@ export const genericAnnotation: RegExp[] = [
 export const annotations: RegExp[] = [
     /@Override/,
     /@SuppressWarnings/,
-    /@Deprecated/
+    /@Deprecated/,
+    /@Safevarargs/,
+    /@FunctionalInterface/
 ];
 
 export const primitiveDataTypes: RegExp[] = [
