@@ -24,6 +24,6 @@ const makeJavaFile = (filePath) => {
 };
 exports.makeJavaFile = makeJavaFile;
 const getFullyQualifiedName = (file) => {
-    return file.package + file.fileName;
+    return file.package + "." + file.fileName;
 };
 exports.getFullyQualifiedName = getFullyQualifiedName;

@@ -32,5 +32,5 @@ export const makeJavaFile = (filePath: string): JavaFile => {
 };
 
 export const getFullyQualifiedName = (file: JavaFile): string => {
-    return file.package + file.fileName;
+    return file.package + "." + file.fileName;
 }
