@@ -4,17 +4,17 @@ import { makeJavaSchema, JavaSchema } from "./JavaSchema"
 
 const findFileName = (filePath: string): string => {
     const components: string[] = filePath.split('/');
-    return components.at(-1)!.slice(-5);
+    return components.at(-1)!.slice(0, -5);
 };
 
 export type JavaFile = {
+    fileName: string;
     package: string;
     imports: string[];
-    fileName: string;
     fileClass: JavaSchema;
 };
 
-export const makeJavaFile = (filePath: string) => {
+export const makeJavaFile = (filePath: string): JavaFile => {
     const whiteList: RegExp[] = accessibilityModifiers
         .concat(inheritance)
         .concat([/import/, /package/, /{/, /}/]);
@@ -23,9 +23,9 @@ export const makeJavaFile = (filePath: string) => {
     const connectedFile: string[] = connectLines(strippedFile, [/{/, /;/])
 
     return {
-        package: stripFileLines(connectedFile, [/package/]),
-        imports: connectedFile.filter(line => /import/.test(line)),
         fileName: findFileName(filePath),
+        package: stripFileLines(connectedFile, [/package/])[0],
+        imports: connectedFile.filter(line => /import/.test(line)),
         fileClass: makeJavaSchema(connectedFile)
     };
 };

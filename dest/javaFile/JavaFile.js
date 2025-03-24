@@ -6,7 +6,7 @@ const tokens_1 = require("../Parse/tokens");
 const JavaSchema_1 = require("./JavaSchema");
 const findFileName = (filePath) => {
     const components = filePath.split('/');
-    return components.at(-1).slice(-5);
+    return components.at(-1).slice(0, -5);
 };
 const makeJavaFile = (filePath) => {
     const whiteList = tokens_1.accessibilityModifiers
@@ -15,9 +15,9 @@ const makeJavaFile = (filePath) => {
     const strippedFile = (0, converter_1.stripFileFromPath)(filePath, whiteList);
     const connectedFile = (0, converter_1.connectLines)(strippedFile, [/{/, /;/]);
     return {
-        package: (0, converter_1.stripFileLines)(connectedFile, [/package/]),
-        imports: connectedFile.filter(line => /import/.test(line)),
         fileName: findFileName(filePath),
+        package: (0, converter_1.stripFileLines)(connectedFile, [/package/])[0],
+        imports: connectedFile.filter(line => /import/.test(line)),
         fileClass: (0, JavaSchema_1.makeJavaSchema)(connectedFile)
     };
 };
