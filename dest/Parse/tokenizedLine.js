@@ -24,7 +24,7 @@ const reconnectTokens = (tokens) => {
     const reconnectedTokens = tokens.reduce((tokens, token) => {
         const result = reconnectTokens.length === 0 || openContainers.length === 0
             ? tokens.concat(token)
-            : tokens.with(-1, tokens.at(-1) + token);
+            : tokens.with(-1, tokens.at(-1) + " " + token);
         const openContainer = token.match(beginningRegex);
         openContainer?.forEach(container => openContainers.push(container));
         const closedContainer = token.match(endingRegex);

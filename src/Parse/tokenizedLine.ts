@@ -27,6 +27,7 @@ const trimTokens = (tokens: string[]): string[] => {
 const reconnectTokens = (tokens: string[]): string[] => {
     const combinedbeginnings: string = combineRegexes(beginningContainers);
     const combinedEndings: string =  combineRegexes(endingContainers);
+    
     const beginningRegex: RegExp = new RegExp(combinedbeginnings, "g");
     const endingRegex: RegExp = new RegExp(combinedEndings, "g");
 
@@ -35,7 +36,7 @@ const reconnectTokens = (tokens: string[]): string[] => {
     const reconnectedTokens: string[] = tokens.reduce((tokens, token): string[] => {
         const result: string[] = reconnectTokens.length === 0 || openContainers.length === 0
             ? tokens.concat(token)
-            : tokens.with(-1, tokens.at(-1) + token);
+            : tokens.with(-1, tokens.at(-1) + " " + token);
 
         const openContainer: string[] | null = token.match(beginningRegex);
         openContainer?.forEach(container => openContainers.push(container));
