@@ -2,11 +2,18 @@ import { TokenizedLine } from "./../Parse/tokenizedLine";
 
 export type JavaField = 
 {
-    //
+    keywords: string[];
+    fieldName: string;
+    fieldType: string;
 };
 
 export const makeJavaField = (tokens: string[]): JavaField => {
-    return {};
+    const mutableTokens: string[] = [];
+    tokens.forEach(token => mutableTokens.push(token));
+    const fieldName: string = mutableTokens.pop()!;
+    const fieldType: string = mutableTokens.pop()!;
+
+    return {fieldName: fieldName, fieldType: fieldType, keywords: tokens};
 }
 
 export const findJavaFields = (file: TokenizedLine[]): TokenizedLine[] => {

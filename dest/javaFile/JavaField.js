@@ -2,7 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.findJavaFields = exports.makeJavaField = void 0;
 const makeJavaField = (tokens) => {
-    return {};
+    const mutableTokens = [];
+    tokens.forEach(token => mutableTokens.push(token));
+    const fieldName = mutableTokens.pop();
+    const fieldType = mutableTokens.pop();
+    return { fieldName: fieldName, fieldType: fieldType, keywords: tokens };
 };
 exports.makeJavaField = makeJavaField;
 const findJavaFields = (file) => {
