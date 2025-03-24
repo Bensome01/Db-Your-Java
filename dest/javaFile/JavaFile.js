@@ -16,7 +16,11 @@ const makeJavaFile = (filePath) => {
     const connectedFile = (0, converter_1.connectLines)(strippedFile, [/{/, /;/]);
     return {
         fileName: findFileName(filePath),
-        package: (0, converter_1.stripFileLines)(connectedFile, [/package/])[0].slice(0, -1),
+        package: connectedFile
+            .find(line => /package/.test(line))
+            .slice(0, -1)
+            .split(' ')
+            .at(-1),
         imports: connectedFile.filter(line => /import/.test(line))
             .map(line => line.slice(0, -1)),
         fileClass: (0, JavaSchema_1.makeJavaSchema)(connectedFile)

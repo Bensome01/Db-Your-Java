@@ -24,7 +24,11 @@ export const makeJavaFile = (filePath: string): JavaFile => {
 
     return {
         fileName: findFileName(filePath),
-        package: stripFileLines(connectedFile, [/package/])[0].slice(0, -1),
+        package: connectedFile
+            .find(line => /package/.test(line))!
+            .slice(0, -1)
+            .split(' ')
+            .at(-1)!,
         imports: connectedFile.filter(line => /import/.test(line))
             .map(line => line.slice(0, -1)),
         fileClass: makeJavaSchema(connectedFile)
