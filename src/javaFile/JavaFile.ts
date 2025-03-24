@@ -1,4 +1,5 @@
 import { connectLines, stripFileFromPath, stripFileLines } from "../Parse/converter";
+import { TokenizedLine, tokenizeLine } from "../Parse/tokenizedLine";
 import { accessibilityModifiers, annotations, inheritance } from "../Parse/tokens";
 import { makeJavaSchema, JavaSchema } from "./JavaSchema"
 
@@ -20,18 +21,21 @@ export const makeJavaFile = (filePath: string): JavaFile => {
         .concat([/import/, /package/, /{/, /}/]);
 
     const strippedFile: string[] = stripFileFromPath(filePath, whiteList);
-    const connectedFile: string[] = connectLines(strippedFile, [/{/, /;/])
+    const connectedFile: string[] = connectLines(strippedFile, [/{/, /;/]);
+    const tokenizedFile: TokenizedLine[] = connectedFile
+        .map((line, index): TokenizedLine => tokenizeLine(line, index));
 
     return {
         fileName: findFileName(filePath),
-        package: connectedFile
-            .find(line => /package/.test(line))!
-            .slice(0, -1)
-            .split(' ')
-            .at(-1)!,
-        imports: connectedFile.filter(line => /import/.test(line))
-            .map(line => line.slice(0, -1)),
-        fileClass: makeJavaSchema(connectedFile)
+        package: tokenizedFile
+            .find(line => line.tokens.at(0) === "package")!
+            .tokens.at(-1)!
+            .slice(0, -1),
+        imports: tokenizedFile
+            .filter(line => line.tokens.at(0))
+            .map(line => line.tokens.at(-1)!.slice(0, -1)),
+        fileClass: makeJavaSchema(tokenizedFile
+            .filter(line => line.tokens.at(0)! !== "import" && line.tokens.at(0)! !== "package"))
     };
 };
 
