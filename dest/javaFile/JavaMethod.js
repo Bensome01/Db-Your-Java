@@ -2,7 +2,19 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.separateMethodFromParameter = exports.makeJavaMethod = void 0;
 const makeJavaMethod = (tokens) => {
-    return {};
+    const mutableTokens = [];
+    tokens.forEach(token => mutableTokens.push(token));
+    const parameters = mutableTokens.pop()
+        .split(/\(|,|\)/)
+        .filter(param => param !== "");
+    const methodName = mutableTokens.pop();
+    const returnType = mutableTokens.pop();
+    return {
+        keywords: mutableTokens,
+        returnType: returnType,
+        methodName: methodName,
+        parameters: parameters
+    };
 };
 exports.makeJavaMethod = makeJavaMethod;
 const separateMethodFromParameter = (line) => {

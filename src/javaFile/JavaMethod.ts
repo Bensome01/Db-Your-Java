@@ -2,11 +2,29 @@ import { TokenizedLine } from "../Parse/tokenizedLine";
 
 export type JavaMethod =
 {
-    //
+    keywords: string[];
+    returnType: string;
+    methodName: string;
+    parameters: string[];
 }
 
 export const makeJavaMethod = (tokens: string[]): JavaMethod => {
-    return {};
+    const mutableTokens: string[] = [];
+    tokens.forEach(token => mutableTokens.push(token));
+
+    const parameters: string[] = mutableTokens.pop()!
+        .split(/\(|,|\)/)
+        .filter(param => param !== "");
+    
+    const methodName: string = mutableTokens.pop()!;
+    const returnType: string = mutableTokens.pop()!;
+
+    return {
+        keywords: mutableTokens,
+        returnType: returnType,
+        methodName: methodName,
+        parameters: parameters
+    };
 }
 
 export const separateMethodFromParameter = (line: TokenizedLine): TokenizedLine => {
