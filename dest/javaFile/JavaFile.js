@@ -2,21 +2,15 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFullyQualifiedName = exports.makeJavaFile = void 0;
 const converter_1 = require("../Parse/converter");
-const tokenizedLine_1 = require("../Parse/tokenizedLine");
-const tokens_1 = require("../Parse/tokens");
 const JavaSchema_1 = require("./JavaSchema");
 const findFileName = (filePath) => {
     const components = filePath.split('/');
     return components.at(-1).slice(0, -5);
 };
 const makeJavaFile = (filePath) => {
-    const whiteList = tokens_1.accessibilityModifiers
-        .concat(tokens_1.inheritance)
-        .concat([/import/, /package/, /{/, /}/]);
-    const strippedFile = (0, converter_1.stripFileFromPath)(filePath, whiteList);
-    const connectedFile = (0, converter_1.connectLines)(strippedFile, [/{/, /;/]);
-    const tokenizedFile = connectedFile
-        .map((line, index) => (0, tokenizedLine_1.tokenizeLine)(line, index));
+    const tokenizedFile = (0, converter_1.stripFileFromPath)(filePath);
+    console.log("makeJavaFile: tokenizedFile =");
+    console.log(tokenizedFile);
     return {
         fileName: findFileName(filePath),
         package: tokenizedFile

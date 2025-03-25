@@ -1,6 +1,5 @@
-import { connectLines, stripFileFromPath, stripFileLines } from "../Parse/converter";
+import { connectLines, stripFileFromPath } from "../Parse/converter";
 import { TokenizedLine, tokenizeLine } from "../Parse/tokenizedLine";
-import { accessibilityModifiers, annotations, inheritance } from "../Parse/tokens";
 import { makeJavaSchema, JavaSchema } from "./JavaSchema"
 
 const findFileName = (filePath: string): string => {
@@ -16,14 +15,10 @@ export type JavaFile = {
 };
 
 export const makeJavaFile = (filePath: string): JavaFile => {
-    const whiteList: RegExp[] = accessibilityModifiers
-        .concat(inheritance)
-        .concat([/import/, /package/, /{/, /}/]);
+    const tokenizedFile: TokenizedLine[] = stripFileFromPath(filePath);
 
-    const strippedFile: string[] = stripFileFromPath(filePath, whiteList);
-    const connectedFile: string[] = connectLines(strippedFile, [/{/, /;/]);
-    const tokenizedFile: TokenizedLine[] = connectedFile
-        .map((line, index): TokenizedLine => tokenizeLine(line, index));
+    console.log("makeJavaFile: tokenizedFile =");
+    console.log(tokenizedFile);
 
     return {
         fileName: findFileName(filePath),
