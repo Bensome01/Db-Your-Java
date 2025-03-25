@@ -14,7 +14,6 @@ export type JavaConstructor =
  * guaranteed to have {, parameters, and className
  */
 export const makeJavaConstructor = (tokens: string[]): JavaConstructor => {
-    console.log(tokens);
     const indexOfAnnotationEnd: number = tokens
         .findIndex(token => annotations
             .some(annotation => token === annotation.source));

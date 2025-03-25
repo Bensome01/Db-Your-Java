@@ -7,7 +7,6 @@ const tokens_1 = require("../Parse/tokens");
  * guaranteed to have {, parameters, and className
  */
 const makeJavaConstructor = (tokens) => {
-    console.log(tokens);
     const indexOfAnnotationEnd = tokens
         .findIndex(token => tokens_1.annotations
         .some(annotation => token === annotation.source));
