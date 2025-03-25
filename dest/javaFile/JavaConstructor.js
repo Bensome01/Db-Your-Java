@@ -8,10 +8,7 @@ const common_1 = require("./common");
  */
 const makeJavaConstructor = (tokens) => {
     const { annotations, annotationEnd } = (0, common_1.findAnnotations)(tokens);
-    const parameters = tokens.at(-2)
-        .split(/\(|\)|,/)
-        .map(param => param.trim())
-        .filter(param => param !== "");
+    const parameters = (0, common_1.determineParameters)(tokens.at(-2));
     return {
         annotations: annotations,
         keywords: tokens.slice(annotationEnd, -3),
