@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFullyQualifiedName = exports.makeJavaFile = void 0;
 const converter_1 = require("../Parse/converter");
+const tokenizedLine_1 = require("../Parse/tokenizedLine");
 const JavaSchema_1 = require("./JavaSchema");
 const findFileName = (filePath) => {
     const components = filePath.split('/');
@@ -9,6 +10,8 @@ const findFileName = (filePath) => {
 };
 const makeJavaFile = (filePath) => {
     const tokenizedFile = (0, converter_1.stripFileFromPath)(filePath);
+    console.log("makeJavaFile: tokenizedFile");
+    (0, tokenizedLine_1.printTokenizedFile)(tokenizedFile);
     return {
         fileName: findFileName(filePath),
         package: tokenizedFile

@@ -1,5 +1,5 @@
-import { connectLines, stripFileFromPath } from "../Parse/converter";
-import { TokenizedLine, tokenizeLine } from "../Parse/tokenizedLine";
+import { stripFileFromPath } from "../Parse/converter";
+import { printTokenizedFile, TokenizedLine } from "../Parse/tokenizedLine";
 import { makeJavaSchema, JavaSchema } from "./JavaSchema"
 
 const findFileName = (filePath: string): string => {
@@ -16,6 +16,9 @@ export type JavaFile = {
 
 export const makeJavaFile = (filePath: string): JavaFile => {
     const tokenizedFile: TokenizedLine[] = stripFileFromPath(filePath);
+
+    console.log("makeJavaFile: tokenizedFile");
+    printTokenizedFile(tokenizedFile);
 
     return {
         fileName: findFileName(filePath),
