@@ -1,4 +1,4 @@
-import { TokenizedLine, tokenizeLine } from "../Parse/tokenizedLine";
+import { printTokenizedFile, TokenizedLine } from "../Parse/tokenizedLine";
 import { findConstructors, JavaConstructor, makeJavaConstructor } from "./JavaConstructor";
 import { findJavaFields, JavaField, makeJavaField } from "./JavaField"
 import { JavaMethod, makeJavaMethod, separateMethodFromParameter } from "./JavaMethod";
@@ -7,7 +7,7 @@ export type JavaSchema =
 {
     schemaName: string;
     keyWords: string[];
-    parent: string | undefined;
+    parent: string;
     interfaces: string[];
     fields: JavaField[];
     constructors: JavaConstructor[];
@@ -71,12 +71,12 @@ const findSchemaKeywords = (tokens: string[]): string[] => {
     return tokens.slice(0, SchemaKeywordLocation);
 };
 
-const findParentClass = (tokens: string[]): string | undefined => {
+const findParentClass = (tokens: string[]): string => {
     const extendsLocation: number = tokens.findIndex(token => token === "extends");
 
     if (extendsLocation == -1)
     {
-        return undefined;
+        return "";
     }
     return tokens[extendsLocation + 1];
 };

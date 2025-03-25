@@ -49,7 +49,7 @@ const findSchemaKeywords = (tokens) => {
 const findParentClass = (tokens) => {
     const extendsLocation = tokens.findIndex(token => token === "extends");
     if (extendsLocation == -1) {
-        return undefined;
+        return "";
     }
     return tokens[extendsLocation + 1];
 };
