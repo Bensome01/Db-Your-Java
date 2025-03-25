@@ -17,9 +17,6 @@ export type JavaFile = {
 export const makeJavaFile = (filePath: string): JavaFile => {
     const tokenizedFile: TokenizedLine[] = stripFileFromPath(filePath);
 
-    console.log("makeJavaFile: tokenizedFile");
-    printTokenizedFile(tokenizedFile);
-
     return {
         fileName: findFileName(filePath),
         package: tokenizedFile
