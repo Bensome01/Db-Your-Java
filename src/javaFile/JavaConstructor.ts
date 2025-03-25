@@ -1,5 +1,6 @@
 import { TokenizedLine } from "../Parse/tokenizedLine";
 import { annotations, keywords } from "../Parse/tokens";
+import { findAnnotations } from "./common";
 
 export type JavaConstructor = 
 {
@@ -14,12 +15,8 @@ export type JavaConstructor =
  * guaranteed to have {, parameters, and className
  */
 export const makeJavaConstructor = (tokens: string[]): JavaConstructor => {
-    const indexOfAnnotationEnd: number = tokens
-        .findIndex(token => annotations
-            .some(annotation => token === annotation.source));
-    const annotationsEnd: number = indexOfAnnotationEnd === -1 ? 0: indexOfAnnotationEnd;
+    const { annotations, annotationEnd } = findAnnotations(tokens);
 
-    const constructorAnnotations: string[] = tokens.slice(0, annotationsEnd);
 
     const parameters: string[] = tokens.at(-2)!
         .split(/\(|\)|,/)
@@ -27,8 +24,8 @@ export const makeJavaConstructor = (tokens: string[]): JavaConstructor => {
         .filter(param => param !== "");
 
     return {
-        annotations: constructorAnnotations,
-        keywords: tokens.slice(annotationsEnd, -3),
+        annotations: annotations,
+        keywords: tokens.slice(annotationEnd, -3),
         className: tokens.at(-3)!,
         parameters: parameters
     };

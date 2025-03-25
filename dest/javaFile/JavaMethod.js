@@ -1,18 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.separateMethodFromParameter = exports.makeJavaMethod = void 0;
+const common_1 = require("./common");
 const makeJavaMethod = (tokens) => {
-    const mutableTokens = [];
-    tokens.forEach(token => mutableTokens.push(token));
-    const parameters = mutableTokens.pop()
-        .split(/\(|,|\)/)
+    const { annotations, annotationEnd } = (0, common_1.findAnnotations)(tokens);
+    const parameters = tokens.at(-2)
+        .split(/\(|, |\)/)
         .filter(param => param !== "");
-    const methodName = mutableTokens.pop();
-    const returnType = mutableTokens.pop();
     return {
-        keywords: mutableTokens,
-        returnType: returnType,
-        methodName: methodName,
+        annotations: annotations,
+        keywords: tokens.slice(annotationEnd, -4),
+        returnType: tokens.at(-4),
+        methodName: tokens.at(-3),
         parameters: parameters
     };
 };

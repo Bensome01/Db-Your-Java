@@ -1,7 +1,9 @@
 import { TokenizedLine } from "../Parse/tokenizedLine";
+import { findAnnotations } from "./common";
 
 export type JavaMethod =
 {
+    annotations: string[];
     keywords: string[];
     returnType: string;
     methodName: string;
@@ -9,20 +11,17 @@ export type JavaMethod =
 }
 
 export const makeJavaMethod = (tokens: string[]): JavaMethod => {
-    const mutableTokens: string[] = [];
-    tokens.forEach(token => mutableTokens.push(token));
+    const { annotations, annotationEnd } = findAnnotations(tokens);
 
-    const parameters: string[] = mutableTokens.pop()!
-        .split(/\(|,|\)/)
+    const parameters: string[] = tokens.at(-2)!
+        .split(/\(|, |\)/)
         .filter(param => param !== "");
-    
-    const methodName: string = mutableTokens.pop()!;
-    const returnType: string = mutableTokens.pop()!;
 
     return {
-        keywords: mutableTokens,
-        returnType: returnType,
-        methodName: methodName,
+        annotations: annotations,
+        keywords: tokens.slice(annotationEnd, -4),
+        returnType: tokens.at(-4)!,
+        methodName: tokens.at(-3)!,
         parameters: parameters
     };
 }
