@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.tokenizeLine = void 0;
+exports.printTokenizedFile = exports.tokenizeLine = void 0;
 const tokens_1 = require("./tokens");
 const tokenizeLine = (line, index) => {
     const trimmedTokens = line.split(' ').filter(token => token !== "");
@@ -26,3 +26,10 @@ const reconnectTokens = (tokens) => {
     }, []);
     return reconnectedTokens;
 };
+const printTokenizedFile = (file) => {
+    const rebuiltFile = file
+        .map(line => line.tokens
+        .reduce((line, token) => line + token + " ", ""));
+    rebuiltFile.forEach(line => console.log(line));
+};
+exports.printTokenizedFile = printTokenizedFile;

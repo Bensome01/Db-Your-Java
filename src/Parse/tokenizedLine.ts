@@ -38,3 +38,11 @@ const reconnectTokens = (tokens: string[]): string[] => {
 
     return reconnectedTokens;
 };
+
+export const printTokenizedFile = (file: TokenizedLine[]): void => {
+    const rebuiltFile: string[] = file
+        .map(line => line.tokens
+            .reduce((line: string, token: string): string => line + token + " ", ""));
+
+    rebuiltFile.forEach(line => console.log(line));
+}
