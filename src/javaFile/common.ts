@@ -28,3 +28,67 @@ export const separateMethodFromParameter = (line: TokenizedLine): TokenizedLine 
 
     return { tokens: line.tokens.toSpliced(methodNameLocation, 1, ...separatedTokens), index: line.index };
 }
+
+export const determineParameters = (parameters: string): string[] => {
+    const removedParenthesis = parameters.slice(1, -1);
+
+    if (removedParenthesis === "")
+    {
+        return [];
+    }
+
+    const splitParameters: string[] = removedParenthesis.split(/, | /);
+    const reconnectedTypes: string[] = reconnectTypes(splitParameters);
+
+    type reconnector = {
+        parameters: string[];
+        hasType: boolean;
+    };
+
+    const reconnectedParameters: string[] = reconnectedTypes
+        .reduce((reconnectedParameters: reconnector, token: string): reconnector => {
+                const parameters = reconnectedParameters.parameters;
+
+                if (reconnectedParameters.hasType)
+                {
+                    return {
+                        parameters: parameters.with(-1, parameters.at(-1)! + " " + token),
+                        hasType: false
+                    };
+                }
+
+                return {
+                    parameters: parameters.concat([token]),
+                    hasType: true
+                };
+            }, { parameters: [], hasType: false })
+        .parameters;
+
+    return reconnectedParameters;
+}
+
+const reconnectTypes = (parameters: string[]): string[] => {
+    type reconnector = {
+        reconnectedParameters: string[];
+        inTypeDeclaration: boolean;
+    };
+
+    return parameters.reduce((connector: reconnector, token): reconnector => {
+                const reconnectedParameters = connector.reconnectedParameters;
+
+                if (connector.inTypeDeclaration)
+                {
+                    return {
+                        reconnectedParameters: reconnectedParameters
+                            .with(-1, reconnectedParameters.at(-1)! + ", " + token),
+                        inTypeDeclaration: !/>/.test(token)
+                    };
+                }
+
+                return {
+                    reconnectedParameters: reconnectedParameters.concat([token]),
+                    inTypeDeclaration: /</.test(token)
+                };
+        }, { reconnectedParameters: [], inTypeDeclaration: false })
+        .reconnectedParameters;
+}

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.separateMethodFromParameter = exports.findAnnotations = void 0;
+exports.determineParameters = exports.separateMethodFromParameter = exports.findAnnotations = void 0;
 const tokens_1 = require("../Parse/tokens");
 const findAnnotations = (tokens) => {
     const annotationEnd = tokens
@@ -24,3 +24,45 @@ const separateMethodFromParameter = (line) => {
     return { tokens: line.tokens.toSpliced(methodNameLocation, 1, ...separatedTokens), index: line.index };
 };
 exports.separateMethodFromParameter = separateMethodFromParameter;
+const determineParameters = (parameters) => {
+    const removedParenthesis = parameters.slice(1, -1);
+    if (removedParenthesis === "") {
+        return [];
+    }
+    const splitParameters = removedParenthesis.split(/, | /);
+    const reconnectedTypes = reconnectTypes(splitParameters);
+    const reconnectedParameters = reconnectedTypes
+        .reduce((reconnectedParameters, token) => {
+        const parameters = reconnectedParameters.parameters;
+        if (reconnectedParameters.hasType) {
+            return {
+                parameters: parameters.with(-1, parameters.at(-1) + " " + token),
+                hasType: false
+            };
+        }
+        return {
+            parameters: parameters.concat([token]),
+            hasType: true
+        };
+    }, { parameters: [], hasType: false })
+        .parameters;
+    return reconnectedParameters;
+};
+exports.determineParameters = determineParameters;
+const reconnectTypes = (parameters) => {
+    return parameters.reduce((connector, token) => {
+        const reconnectedParameters = connector.reconnectedParameters;
+        if (connector.inTypeDeclaration) {
+            return {
+                reconnectedParameters: reconnectedParameters
+                    .with(-1, reconnectedParameters.at(-1) + ", " + token),
+                inTypeDeclaration: !/>/.test(token)
+            };
+        }
+        return {
+            reconnectedParameters: reconnectedParameters.concat([token]),
+            inTypeDeclaration: /</.test(token)
+        };
+    }, { reconnectedParameters: [], inTypeDeclaration: false })
+        .reconnectedParameters;
+};
