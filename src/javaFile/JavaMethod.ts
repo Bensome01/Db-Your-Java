@@ -39,5 +39,5 @@ export const separateMethodFromParameter = (line: TokenizedLine): TokenizedLine 
     const separateLocation: number = targetToken.indexOf("(");
     const separatedTokens: string[] = [targetToken.slice(0, separateLocation), targetToken.slice(separateLocation)];
 
-    return { tokens: line.tokens.toSpliced(methodNameLocation, 0, ...separatedTokens), index: line.index };
+    return { tokens: line.tokens.toSpliced(methodNameLocation, 1, ...separatedTokens), index: line.index };
 }
