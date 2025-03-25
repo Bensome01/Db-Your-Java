@@ -3,19 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.tokenizeLine = void 0;
 const tokens_1 = require("./tokens");
 const tokenizeLine = (line, index) => {
-    const trimmedTokens = trimTokens(line.split(' '));
+    const trimmedTokens = line.split(' ').filter(token => token !== "");
     const reconnectedTokens = reconnectTokens(trimmedTokens);
     return { tokens: reconnectedTokens, index: index };
 };
 exports.tokenizeLine = tokenizeLine;
-const trimTokens = (tokens) => {
-    const removedWhiteSpace = tokens.filter(token => token !== "");
-    const equalsIndex = removedWhiteSpace.findIndex(token => token === "=");
-    if (equalsIndex === -1) {
-        return removedWhiteSpace;
-    }
-    return removedWhiteSpace.slice(0, equalsIndex);
-};
 const reconnectTokens = (tokens) => {
     const combinedbeginnings = (0, tokens_1.combineRegexes)(tokens_1.beginningContainers);
     const combinedEndings = (0, tokens_1.combineRegexes)(tokens_1.endingContainers);

@@ -7,22 +7,10 @@ export type TokenizedLine =
 };
 
 export const tokenizeLine = (line: string, index: number): TokenizedLine => {
-    const trimmedTokens: string[] = trimTokens(line.split(' '));
+    const trimmedTokens: string[] = line.split(' ').filter(token => token !== "");
     const reconnectedTokens: string[] = reconnectTokens(trimmedTokens);
 
     return { tokens: reconnectedTokens, index: index };
-}
-
-const trimTokens = (tokens: string[]): string[] => {
-    const removedWhiteSpace: string[] = tokens.filter(token => token !== "");
-    const equalsIndex: number = removedWhiteSpace.findIndex(token => token === "=");
-
-    if (equalsIndex === -1)
-    {
-        return removedWhiteSpace;
-    }
-
-    return removedWhiteSpace.slice(0, equalsIndex);
 }
 
 const reconnectTokens = (tokens: string[]): string[] => {
