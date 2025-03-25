@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.makeJavaSchema = void 0;
+const common_1 = require("./common");
 const JavaConstructor_1 = require("./JavaConstructor");
 const JavaField_1 = require("./JavaField");
 const JavaMethod_1 = require("./JavaMethod");
@@ -19,7 +20,7 @@ const makeJavaSchema = (file) => {
     const excludeJavaFields = excludeContentInBounds(excludeNestedClassContents, javaFields.map(line => {
         return { start: line.index, end: line.index };
     }))
-        .map(line => (0, JavaMethod_1.separateMethodFromParameter)(line));
+        .map(line => (0, common_1.separateMethodFromParameter)(line));
     const javaConstructors = (0, JavaConstructor_1.findConstructors)(excludeJavaFields, schemaName);
     const excludeJavaConstructors = excludeContentInBounds(excludeJavaFields, javaConstructors.map(line => {
         return { start: line.index, end: line.index };

@@ -1,7 +1,8 @@
 import { printTokenizedFile, TokenizedLine } from "../Parse/tokenizedLine";
+import { separateMethodFromParameter } from "./common";
 import { findConstructors, JavaConstructor, makeJavaConstructor } from "./JavaConstructor";
 import { findJavaFields, JavaField, makeJavaField } from "./JavaField"
-import { JavaMethod, makeJavaMethod, separateMethodFromParameter } from "./JavaMethod";
+import { JavaMethod, makeJavaMethod } from "./JavaMethod";
 
 export type JavaSchema =
 {
