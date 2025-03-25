@@ -1,24 +1,38 @@
 import { TokenizedLine } from "../Parse/tokenizedLine";
-import { keywords } from "../Parse/tokens";
+import { annotations, keywords } from "../Parse/tokens";
 
 export type JavaConstructor = 
 {
+    annotations: string[];
     keywords: string[];
+    className: string;
     parameters: string[];
 };
 
-
+/*
+ * @annotations keywords className parameters {
+ * guaranteed to have {, parameters, and className
+ */
 export const makeJavaConstructor = (tokens: string[]): JavaConstructor => {
-    const mutableTokens: string[] = [];
-    tokens.forEach(token => mutableTokens.push(token));
+    console.log(tokens);
+    const indexOfAnnotationEnd: number = tokens
+        .findIndex(token => annotations
+            .some(annotation => token === annotation.source));
+    const annotationsEnd: number = indexOfAnnotationEnd === -1 ? 0: indexOfAnnotationEnd;
 
-    const parameters: string[] = mutableTokens.pop()!
-        .split(/\(|,|\)/)
+    const constructorAnnotations: string[] = tokens.slice(0, annotationsEnd);
+
+    const parameters: string[] = tokens.at(-2)!
+        .split(/\(|\)|,/)
+        .map(param => param.trim())
         .filter(param => param !== "");
-        
-    const constructorName: string = mutableTokens.pop()!;
 
-    return {keywords: mutableTokens, parameters: parameters};
+    return {
+        annotations: constructorAnnotations,
+        keywords: tokens.slice(annotationsEnd, -3),
+        className: tokens.at(-3)!,
+        parameters: parameters
+    };
 }
 
 export const findConstructors = (file: TokenizedLine[], className: string): TokenizedLine[] => {
