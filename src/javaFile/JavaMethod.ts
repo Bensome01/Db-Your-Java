@@ -1,5 +1,4 @@
-import { TokenizedLine } from "../Parse/tokenizedLine";
-import { findAnnotations } from "./common";
+import { determineParameters, findAnnotations } from "./common";
 
 export type JavaMethod =
 {
@@ -13,9 +12,7 @@ export type JavaMethod =
 export const makeJavaMethod = (tokens: string[]): JavaMethod => {
     const { annotations, annotationEnd } = findAnnotations(tokens);
 
-    const parameters: string[] = tokens.at(-2)!
-        .split(/\(|, |\)/)
-        .filter(param => param !== "");
+    const parameters: string[] = determineParameters(tokens.at(-2)!);
 
     return {
         annotations: annotations,
