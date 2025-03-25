@@ -9,8 +9,6 @@ const findFileName = (filePath) => {
 };
 const makeJavaFile = (filePath) => {
     const tokenizedFile = (0, converter_1.stripFileFromPath)(filePath);
-    console.log("makeJavaFile: tokenizedFile =");
-    console.log(tokenizedFile);
     return {
         fileName: findFileName(filePath),
         package: tokenizedFile
@@ -18,7 +16,7 @@ const makeJavaFile = (filePath) => {
             .tokens.at(-1)
             .slice(0, -1),
         imports: tokenizedFile
-            .filter(line => line.tokens.at(0))
+            .filter(line => line.tokens.at(0) === "import")
             .map(line => line.tokens.at(-1).slice(0, -1)),
         fileClass: (0, JavaSchema_1.makeJavaSchema)(tokenizedFile
             .filter(line => line.tokens.at(0) !== "import" && line.tokens.at(0) !== "package"))

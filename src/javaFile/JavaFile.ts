@@ -17,9 +17,6 @@ export type JavaFile = {
 export const makeJavaFile = (filePath: string): JavaFile => {
     const tokenizedFile: TokenizedLine[] = stripFileFromPath(filePath);
 
-    console.log("makeJavaFile: tokenizedFile =");
-    console.log(tokenizedFile);
-
     return {
         fileName: findFileName(filePath),
         package: tokenizedFile
@@ -27,7 +24,7 @@ export const makeJavaFile = (filePath: string): JavaFile => {
             .tokens.at(-1)!
             .slice(0, -1),
         imports: tokenizedFile
-            .filter(line => line.tokens.at(0))
+            .filter(line => line.tokens.at(0) === "import")
             .map(line => line.tokens.at(-1)!.slice(0, -1)),
         fileClass: makeJavaSchema(tokenizedFile
             .filter(line => line.tokens.at(0)! !== "import" && line.tokens.at(0)! !== "package"))
