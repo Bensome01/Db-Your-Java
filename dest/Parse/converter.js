@@ -13,7 +13,9 @@ const stripFile = (rawFile) => {
     return stripFileLines(separatedFile);
 };
 const stripFileLines = (lines) => {
-    const trimmedLines = lines.filter(line => line !== "");
+    const trimmedLines = lines
+        .filter(line => line !== "")
+        .map(line => line.trim());
     const uncommentedLines = removeComments(trimmedLines);
     const reconnectedLines = (0, exports.connectLines)(uncommentedLines, [/{/, /}/, /;/]);
     const tokenizedLines = reconnectedLines.map((line, index) => (0, tokenizedLine_1.tokenizeLine)(line, index));
@@ -64,15 +66,15 @@ const removeNonClassContent = (lines) => {
             ? fileContent.strippedLines.concat([line])
             : fileContent.strippedLines;
         const depth = line.tokens.some(token => token === "class")
-            ? 0
+            ? fileContent.nestedDepth
             : line.tokens.reduce((depth, token) => {
-                const openBrackets = token.match(/{/);
+                const openBrackets = token.match(/{/g);
                 const openBracketsCount = openBrackets === null ? 0 : openBrackets.length;
-                const closedBrackets = token.match(/}/);
+                const closedBrackets = token.match(/}/g);
                 const closedBracketsCount = closedBrackets === null ? 0 : closedBrackets.length;
                 return depth + openBracketsCount - closedBracketsCount;
-            }, 0);
-        return { strippedLines: strippedLines, nestedDepth: fileContent.nestedDepth + depth };
+            }, 0) + fileContent.nestedDepth;
+        return { strippedLines: strippedLines, nestedDepth: Math.max(depth, 0) };
     }, { strippedLines: [], nestedDepth: 0 })
         .strippedLines;
     return strippedLines;
@@ -80,7 +82,7 @@ const removeNonClassContent = (lines) => {
 const connectLines = (lines, endings) => {
     const connectedLines = lines.reduce((connectedLines, line) => {
         const lastIndex = connectedLines.length - 1;
-        if (connectedLines.length == 0 || endings.some(test => test.test(connectedLines[lastIndex]))) {
+        if (connectedLines.length == 0 || endings.some(ending => ending.test(connectedLines[lastIndex]))) {
             connectedLines.push(line);
         }
         else {

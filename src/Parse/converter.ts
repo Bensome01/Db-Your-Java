@@ -15,7 +15,9 @@ const stripFile = (rawFile: string): TokenizedLine[] => {
 };
 
 const stripFileLines = (lines: string[]): TokenizedLine[] => {
-    const trimmedLines: string[] = lines.filter(line => line !== "");
+    const trimmedLines: string[] = lines
+        .filter(line => line !== "")
+        .map(line => line.trim());
     const uncommentedLines: string[] = removeComments(trimmedLines);
     const reconnectedLines: string[] = connectLines(uncommentedLines, [/{/, /}/, /;/]);
     const tokenizedLines: TokenizedLine[] = reconnectedLines.map((line, index) => tokenizeLine(line, index));
@@ -91,18 +93,18 @@ const removeNonClassContent = (lines: TokenizedLine[]): TokenizedLine[] => {
                     : fileContent.strippedLines;
 
                 const depth: number = line.tokens.some(token => token === "class")
-                    ? 0
+                    ? fileContent.nestedDepth
                     : line.tokens.reduce((depth, token): number => {
-                        const openBrackets: string[] | null = token.match(/{/);
+                        const openBrackets: string[] | null = token.match(/{/g);
                         const openBracketsCount = openBrackets === null ? 0 : openBrackets.length;
 
-                        const closedBrackets: string[] | null = token.match(/}/);
+                        const closedBrackets: string[] | null = token.match(/}/g);
                         const closedBracketsCount = closedBrackets === null ? 0 : closedBrackets.length;
 
                         return depth + openBracketsCount - closedBracketsCount
-                    }, 0);
+                    }, 0) + fileContent.nestedDepth;
 
-                return { strippedLines: strippedLines, nestedDepth: fileContent.nestedDepth + depth };
+                return { strippedLines: strippedLines, nestedDepth: Math.max(depth, 0) };
             },
         { strippedLines: [], nestedDepth: 0 })
         .strippedLines;
@@ -111,9 +113,9 @@ const removeNonClassContent = (lines: TokenizedLine[]): TokenizedLine[] => {
 };
 
 export const connectLines = (lines: string[], endings: RegExp[]): string[] => {
-    const connectedLines = lines.reduce((connectedLines, line) => {
+    const connectedLines: string[] = lines.reduce((connectedLines, line) => {
         const lastIndex = connectedLines.length - 1;
-        if (connectedLines.length == 0 || endings.some(test => test.test(connectedLines[lastIndex])))
+        if (connectedLines.length == 0 || endings.some(ending => ending.test(connectedLines[lastIndex])))
         {
             connectedLines.push(line);
         }
