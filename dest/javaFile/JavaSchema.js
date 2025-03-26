@@ -6,15 +6,11 @@ const JavaConstructor_1 = require("./JavaConstructor");
 const JavaField_1 = require("./JavaField");
 const JavaMethod_1 = require("./JavaMethod");
 const makeJavaSchema = (file) => {
-    const schemaDeclarations = file
-        .filter(line => line.tokens.some(token => token === "class" || token === "interface"));
-    const mainSchema = schemaDeclarations[0];
+    console.log("Make JavaSchema");
+    const mainSchema = file.at(0);
     const schemaName = findSchemaName(mainSchema.tokens);
     const mainSchemaContents = file.slice(1, -1);
-    const nestedClassBounds = schemaDeclarations.slice(1)
-        .map((declarations) => {
-        return { start: declarations.index, end: contentBounds(declarations.index, mainSchemaContents) };
-    });
+    const nestedClassBounds = findNestedClasses(mainSchemaContents);
     const excludeNestedClassContents = excludeContentInBounds(mainSchemaContents, nestedClassBounds);
     const javaFields = (0, JavaField_1.findJavaFields)(excludeNestedClassContents);
     const excludeJavaFields = excludeContentInBounds(excludeNestedClassContents, javaFields.map(line => {
@@ -90,4 +86,29 @@ const excludeContentInBounds = (file, contentBounds) => {
     return file
         .filter((line) => !contentBounds
         .some(bounds => inRangeInclusive(bounds.start, bounds.end, line.index)));
+};
+const findNestedClasses = (file) => {
+    const reIndexedFile = file
+        .map((line, index) => {
+        return { tokens: line.tokens, index: index };
+    });
+    const nestedClassBounds = reIndexedFile.reduce((boundsFinder, line) => {
+        const isClassDeclaration = line.tokens.some(token => token === "class");
+        const isClassCloser = line.tokens.every(token => token === "}");
+        const classDepth = isClassDeclaration
+            ? boundsFinder.classDepth + 1
+            : isClassCloser
+                ? boundsFinder.classDepth - 1
+                : boundsFinder.classDepth;
+        const classBounds = isClassDeclaration
+            ? boundsFinder.classBounds.concat([{ start: line.index, end: line.index }])
+            : isClassCloser && classDepth === 0
+                ? boundsFinder.classBounds.with(-1, { start: boundsFinder.classBounds.at(-1).start, end: line.index })
+                : boundsFinder.classBounds;
+        return {
+            classBounds: classBounds,
+            classDepth: classDepth
+        };
+    }, { classBounds: [], classDepth: 0 }).classBounds;
+    return nestedClassBounds;
 };

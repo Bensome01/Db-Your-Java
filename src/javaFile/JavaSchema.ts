@@ -4,6 +4,11 @@ import { findConstructors, JavaConstructor, makeJavaConstructor } from "./JavaCo
 import { findJavaFields, JavaField, makeJavaField } from "./JavaField"
 import { JavaMethod, makeJavaMethod } from "./JavaMethod";
 
+type Range = {
+    start: number;
+    end: number;
+};
+
 export type JavaSchema =
 {
     schemaName: string;
@@ -17,23 +22,18 @@ export type JavaSchema =
 };
 
 export const makeJavaSchema = (file: TokenizedLine[]): JavaSchema => {
-    const schemaDeclarations: TokenizedLine[] = file
-    .filter(line => line.tokens.some(token => token === "class" || token === "interface"));
+    console.log("Make JavaSchema");
 
-    const mainSchema: TokenizedLine = schemaDeclarations[0];
+    const mainSchema: TokenizedLine = file.at(0)!;
 
     const schemaName = findSchemaName(mainSchema.tokens);
 
     const mainSchemaContents = file.slice(1, -1);
 
-    const nestedClassBounds: {start: number, end: number}[] = schemaDeclarations.slice(1)
-        .map((declarations): {start: number, end: number} => {
-            return { start: declarations.index , end: contentBounds(declarations.index, mainSchemaContents)}
-        });
-
+    const nestedClassBounds: Range[] = findNestedClasses(mainSchemaContents);
     const excludeNestedClassContents: TokenizedLine[] = excludeContentInBounds(mainSchemaContents, nestedClassBounds);
-    const javaFields: TokenizedLine[] = findJavaFields(excludeNestedClassContents);
 
+    const javaFields: TokenizedLine[] = findJavaFields(excludeNestedClassContents);
     const excludeJavaFields: TokenizedLine[] = excludeContentInBounds(excludeNestedClassContents,
         javaFields.map(line => {
             return {start: line.index, end: line.index};
@@ -41,7 +41,6 @@ export const makeJavaSchema = (file: TokenizedLine[]): JavaSchema => {
         .map(line => separateMethodFromParameter(line));
 
     const javaConstructors: TokenizedLine[] = findConstructors(excludeJavaFields, schemaName);
-
     const excludeJavaConstructors: TokenizedLine[] = excludeContentInBounds(excludeJavaFields, javaConstructors.map(line => {
         return { start: line.index, end: line.index };
     }));
@@ -124,7 +123,7 @@ const contentBounds = (start: number, file: TokenizedLine[]): number => {
     }, start)
 };
 
-const excludeContentInBounds = (file: TokenizedLine[], contentBounds: {start: number, end: number}[])
+const excludeContentInBounds = (file: TokenizedLine[], contentBounds: Range[])
     : TokenizedLine[] => {
         const inRangeInclusive = (start: number, end: number, num: number): boolean => {
             return start <= num && num <= end;
@@ -134,3 +133,35 @@ const excludeContentInBounds = (file: TokenizedLine[], contentBounds: {start: nu
             .filter((line) => !contentBounds
                 .some(bounds => inRangeInclusive(bounds.start, bounds.end, line.index)))
     };
+
+const findNestedClasses = (file: TokenizedLine[]): Range[] => {
+    const reIndexedFile: TokenizedLine[] = file
+        .map((line, index): TokenizedLine => {
+            return { tokens: line.tokens, index: index };
+        });
+
+    const nestedClassBounds = reIndexedFile.reduce((boundsFinder: { classBounds: Range[], classDepth: number },
+        line): { classBounds: Range[], classDepth: number } => {
+        const isClassDeclaration: boolean = line.tokens.some(token => token === "class");
+        const isClassCloser: boolean = line.tokens.every(token => token === "}");
+
+        const classDepth: number = isClassDeclaration
+        ? boundsFinder.classDepth + 1
+        : isClassCloser
+            ? boundsFinder.classDepth - 1
+            : boundsFinder.classDepth;
+
+        const classBounds: Range[] = isClassDeclaration
+        ? boundsFinder.classBounds.concat([{ start: line.index, end: line.index }])
+        : isClassCloser && classDepth === 0
+            ? boundsFinder.classBounds.with(-1, { start: boundsFinder.classBounds.at(-1)!.start, end: line.index })
+            : boundsFinder.classBounds;
+
+        return {
+            classBounds: classBounds,
+            classDepth: classDepth
+        };
+    }, { classBounds: [], classDepth: 0 }).classBounds;
+
+    return nestedClassBounds;
+}
