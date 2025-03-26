@@ -11,20 +11,22 @@ export type JavaField =
 };
 
 export const makeJavaField = (tokens: string[]): JavaField => {
-    const { annotations, annotationEnd } = findAnnotations(tokens);
+    const trimmedSemiColon = tokens.with(-1, tokens.at(-1)!.slice(0, -1));
 
-    const equalSignLocation: number = tokens.findIndex(token => token === "=");
-    const declarationEnd: number = equalSignLocation === -1 ? tokens.length : equalSignLocation
+    const { annotations, annotationEnd } = findAnnotations(trimmedSemiColon);
+
+    const equalSignLocation: number = trimmedSemiColon.findIndex(token => token === "=");
+    const declarationEnd: number = equalSignLocation === -1 ? trimmedSemiColon.length : equalSignLocation
 
     return {
         annotations: annotations,
-        keywords: tokens.slice(annotationEnd, declarationEnd - 2),
-        fieldType: tokens.at(declarationEnd - 2)!,
-        fieldName: tokens.at(declarationEnd - 1)!,
-        fieldValue: equalSignLocation === -1 ? "" : tokens.at(equalSignLocation + 1)!
+        keywords: trimmedSemiColon.slice(annotationEnd, declarationEnd - 2),
+        fieldType: trimmedSemiColon.at(declarationEnd - 2)!,
+        fieldName: trimmedSemiColon.at(declarationEnd - 1)!,
+        fieldValue: equalSignLocation === -1 ? "" : trimmedSemiColon.slice(equalSignLocation + 1).join(" ").slice()
     };
 }
 
 export const findJavaFields = (file: TokenizedLine[]): TokenizedLine[] => {
-    return file.filter(line => !line.tokens.some(token => /\(/.test(token)));
+    return file.filter(line => !line.tokens.some(token => /\(/.test(token)) || line.tokens.some(token => token === "="));
 }
