@@ -35,15 +35,16 @@ export const makeJavaSchema = (file: TokenizedLine[]): JavaSchema => {
 
     const javaFields: TokenizedLine[] = findJavaFields(excludeNestedClassContents);
     const excludeJavaFields: TokenizedLine[] = excludeContentInBounds(excludeNestedClassContents,
-        javaFields.map(line => {
-            return {start: line.index, end: line.index};
+        javaFields.map((line, index) => {
+            return {start: index, end: index};
         }))
         .map(line => separateMethodFromParameter(line));
 
     const javaConstructors: TokenizedLine[] = findConstructors(excludeJavaFields, schemaName);
-    const excludeJavaConstructors: TokenizedLine[] = excludeContentInBounds(excludeJavaFields, javaConstructors.map(line => {
-        return { start: line.index, end: line.index };
-    }));
+    const excludeJavaConstructors: TokenizedLine[] = excludeContentInBounds(excludeJavaFields,
+        javaConstructors.map((line, index) => {
+            return { start: index, end: index };
+        }));
 
     const javaMethods: TokenizedLine[] = excludeJavaConstructors;
 

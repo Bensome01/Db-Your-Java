@@ -13,13 +13,13 @@ const makeJavaSchema = (file) => {
     const nestedClassBounds = findNestedClasses(mainSchemaContents);
     const excludeNestedClassContents = excludeContentInBounds(mainSchemaContents, nestedClassBounds);
     const javaFields = (0, JavaField_1.findJavaFields)(excludeNestedClassContents);
-    const excludeJavaFields = excludeContentInBounds(excludeNestedClassContents, javaFields.map(line => {
-        return { start: line.index, end: line.index };
+    const excludeJavaFields = excludeContentInBounds(excludeNestedClassContents, javaFields.map((line, index) => {
+        return { start: index, end: index };
     }))
         .map(line => (0, common_1.separateMethodFromParameter)(line));
     const javaConstructors = (0, JavaConstructor_1.findConstructors)(excludeJavaFields, schemaName);
-    const excludeJavaConstructors = excludeContentInBounds(excludeJavaFields, javaConstructors.map(line => {
-        return { start: line.index, end: line.index };
+    const excludeJavaConstructors = excludeContentInBounds(excludeJavaFields, javaConstructors.map((line, index) => {
+        return { start: index, end: index };
     }));
     const javaMethods = excludeJavaConstructors;
     return {
