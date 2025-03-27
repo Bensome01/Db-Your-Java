@@ -12,13 +12,15 @@ export type JavaMethod =
 export const makeJavaMethod = (tokens: string[]): JavaMethod => {
     const { annotations, annotationEnd } = findAnnotations(tokens);
 
-    const parameters: string[] = determineParameters(tokens.at(-2)!);
+    const endCurlyAdjustment: number = tokens.at(-1)! === "{" ? -1 : 0;
+
+    const parameters: string[] = determineParameters(tokens.at(-1 + endCurlyAdjustment)!);
 
     return {
         annotations: annotations,
-        keywords: tokens.slice(annotationEnd, -4),
-        returnType: tokens.at(-4)!,
-        methodName: tokens.at(-3)!,
+        keywords: tokens.slice(annotationEnd, -3 + endCurlyAdjustment),
+        returnType: tokens.at(-3 + endCurlyAdjustment)!,
+        methodName: tokens.at(-2 + endCurlyAdjustment)!,
         parameters: parameters
     };
 }

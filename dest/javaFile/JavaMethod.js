@@ -4,12 +4,13 @@ exports.printJavaMethod = exports.makeJavaMethod = void 0;
 const common_1 = require("./common");
 const makeJavaMethod = (tokens) => {
     const { annotations, annotationEnd } = (0, common_1.findAnnotations)(tokens);
-    const parameters = (0, common_1.determineParameters)(tokens.at(-2));
+    const endCurlyAdjustment = tokens.at(-1) === "{" ? -1 : 0;
+    const parameters = (0, common_1.determineParameters)(tokens.at(-1 + endCurlyAdjustment));
     return {
         annotations: annotations,
-        keywords: tokens.slice(annotationEnd, -4),
-        returnType: tokens.at(-4),
-        methodName: tokens.at(-3),
+        keywords: tokens.slice(annotationEnd, -3 + endCurlyAdjustment),
+        returnType: tokens.at(-3 + endCurlyAdjustment),
+        methodName: tokens.at(-2 + endCurlyAdjustment),
         parameters: parameters
     };
 };

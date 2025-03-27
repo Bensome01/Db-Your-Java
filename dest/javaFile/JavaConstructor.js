@@ -4,15 +4,17 @@ exports.printJavaConstructor = exports.findConstructors = exports.makeJavaConstr
 const common_1 = require("./common");
 /*
  * @annotations keywords className parameters {
- * guaranteed to have {, parameters, and className
+ * guaranteed to have parameters, and className
+ * may have either { or parameters;
  */
 const makeJavaConstructor = (tokens) => {
     const { annotations, annotationEnd } = (0, common_1.findAnnotations)(tokens);
-    const parameters = (0, common_1.determineParameters)(tokens.at(-2));
+    const endCurlyAdjustment = tokens.at(-1) === "{" ? -1 : 0;
+    const parameters = (0, common_1.determineParameters)(tokens.at(-1 + endCurlyAdjustment));
     return {
         annotations: annotations,
-        keywords: tokens.slice(annotationEnd, -3),
-        className: tokens.at(-3),
+        keywords: tokens.slice(annotationEnd, -2 + endCurlyAdjustment),
+        className: tokens.at(-2 + endCurlyAdjustment),
         parameters: parameters
     };
 };

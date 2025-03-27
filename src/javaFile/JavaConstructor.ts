@@ -12,18 +12,20 @@ export type JavaConstructor =
 
 /*
  * @annotations keywords className parameters {
- * guaranteed to have {, parameters, and className
+ * guaranteed to have parameters, and className
+ * may have either { or parameters;
  */
 export const makeJavaConstructor = (tokens: string[]): JavaConstructor => {
     const { annotations, annotationEnd } = findAnnotations(tokens);
 
+    const endCurlyAdjustment: number = tokens.at(-1)! === "{" ? -1 : 0;
 
-    const parameters: string[] = determineParameters(tokens.at(-2)!);
+    const parameters: string[] = determineParameters(tokens.at(-1 + endCurlyAdjustment)!);
 
     return {
         annotations: annotations,
-        keywords: tokens.slice(annotationEnd, -3),
-        className: tokens.at(-3)!,
+        keywords: tokens.slice(annotationEnd, -2 + endCurlyAdjustment),
+        className: tokens.at(-2 + endCurlyAdjustment)!,
         parameters: parameters
     };
 }
