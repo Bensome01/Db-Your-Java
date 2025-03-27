@@ -22,6 +22,7 @@ const makeJavaSchema = (file) => {
     }));
     const javaMethods = excludeJavaConstructors;
     return {
+        schema: mainSchema.tokens.find(token => token === "class" || token === "interface"),
         schemaName: schemaName,
         keyWords: findSchemaKeywords(mainSchema.tokens),
         parent: findParentClass(mainSchema.tokens),
@@ -112,6 +113,7 @@ const findNestedClasses = (file) => {
     return nestedClassBounds;
 };
 const printJavaSchema = (schema) => {
+    console.log("schema: ", schema.schema);
     console.log("schema name: ", schema.schemaName);
     console.log("keywords: ", schema.keyWords);
     console.log("parent: ", schema.parent);

@@ -11,6 +11,7 @@ type Range = {
 
 export type JavaSchema =
 {
+    schema: string;
     schemaName: string;
     keyWords: string[];
     parent: string;
@@ -47,6 +48,7 @@ export const makeJavaSchema = (file: TokenizedLine[]): JavaSchema => {
     const javaMethods: TokenizedLine[] = excludeJavaConstructors;
 
     return {
+        schema: mainSchema.tokens.find(token => token === "class" || token === "interface")!,
         schemaName: schemaName,
         keyWords: findSchemaKeywords(mainSchema.tokens),
         parent: findParentClass(mainSchema.tokens),
@@ -165,6 +167,7 @@ const findNestedClasses = (file: TokenizedLine[]): Range[] => {
 }
 
 export const printJavaSchema = (schema: JavaSchema): void => {
+    console.log("schema: ", schema.schema);
     console.log("schema name: ", schema.schemaName);
     console.log("keywords: ", schema.keyWords);
     console.log("parent: ", schema.parent);
