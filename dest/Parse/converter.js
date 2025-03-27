@@ -65,7 +65,7 @@ const removeNonClassContent = (lines) => {
         const strippedLines = fileContent.nestedDepth === 0
             ? fileContent.strippedLines.concat([line])
             : fileContent.strippedLines;
-        const depth = line.tokens.some(token => token === "class")
+        const depth = line.tokens.some(token => token === "class" || token === "interface")
             ? fileContent.nestedDepth
             : line.tokens.reduce((depth, token) => {
                 const openBrackets = token.match(/{/g);

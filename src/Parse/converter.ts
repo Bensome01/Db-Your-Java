@@ -92,7 +92,7 @@ const removeNonClassContent = (lines: TokenizedLine[]): TokenizedLine[] => {
                     ? fileContent.strippedLines.concat([line])
                     : fileContent.strippedLines;
 
-                const depth: number = line.tokens.some(token => token === "class")
+                const depth: number = line.tokens.some(token => token === "class" || token === "interface")
                     ? fileContent.nestedDepth
                     : line.tokens.reduce((depth, token): number => {
                         const openBrackets: string[] | null = token.match(/{/g);
