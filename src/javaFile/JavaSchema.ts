@@ -32,6 +32,7 @@ export const makeJavaSchema = (file: TokenizedLine[]): JavaSchema => {
 
     const nestedClassBounds: Range[] = findNestedClasses(mainSchemaContents);
     const excludeNestedClassContents: TokenizedLine[] = excludeContentInBounds(mainSchemaContents, nestedClassBounds);
+    console.log(excludeNestedClassContents);
 
     const javaFields: TokenizedLine[] = findJavaFields(excludeNestedClassContents);
     const excludeJavaFields: TokenizedLine[] = excludeContentInBounds(excludeNestedClassContents,
@@ -123,16 +124,15 @@ const contentBounds = (start: number, file: TokenizedLine[]): number => {
     }, start)
 };
 
-const excludeContentInBounds = (file: TokenizedLine[], contentBounds: Range[])
-    : TokenizedLine[] => {
-        const inRangeInclusive = (start: number, end: number, num: number): boolean => {
-            return start <= num && num <= end;
-        };
-
-        return file
-            .filter((line) => !contentBounds
-                .some(bounds => inRangeInclusive(bounds.start, bounds.end, line.index)))
+const excludeContentInBounds = (file: TokenizedLine[], contentBounds: Range[]): TokenizedLine[] => {
+    const inRangeInclusive = (range: Range, num: number): boolean => {
+        return range.start <= num && num <= range.end;
     };
+
+    return file
+        .filter((line, index) => !contentBounds
+            .some(bounds => inRangeInclusive(bounds, index)))
+};
 
 const findNestedClasses = (file: TokenizedLine[]): Range[] => {
     const reIndexedFile: TokenizedLine[] = file

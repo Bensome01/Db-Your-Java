@@ -12,6 +12,7 @@ const makeJavaSchema = (file) => {
     const mainSchemaContents = file.slice(1, -1);
     const nestedClassBounds = findNestedClasses(mainSchemaContents);
     const excludeNestedClassContents = excludeContentInBounds(mainSchemaContents, nestedClassBounds);
+    console.log(excludeNestedClassContents);
     const javaFields = (0, JavaField_1.findJavaFields)(excludeNestedClassContents);
     const excludeJavaFields = excludeContentInBounds(excludeNestedClassContents, javaFields.map(line => {
         return { start: line.index, end: line.index };
@@ -80,12 +81,12 @@ const contentBounds = (start, file) => {
     }, start);
 };
 const excludeContentInBounds = (file, contentBounds) => {
-    const inRangeInclusive = (start, end, num) => {
-        return start <= num && num <= end;
+    const inRangeInclusive = (range, num) => {
+        return range.start <= num && num <= range.end;
     };
     return file
-        .filter((line) => !contentBounds
-        .some(bounds => inRangeInclusive(bounds.start, bounds.end, line.index)));
+        .filter((line, index) => !contentBounds
+        .some(bounds => inRangeInclusive(bounds, index)));
 };
 const findNestedClasses = (file) => {
     const reIndexedFile = file
