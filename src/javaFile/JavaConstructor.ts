@@ -31,3 +31,10 @@ export const makeJavaConstructor = (tokens: string[]): JavaConstructor => {
 export const findConstructors = (file: TokenizedLine[], className: string): TokenizedLine[] => {
     return file.filter(line => line.tokens.some(token => token === className));
 }
+
+export const printJavaConstructor = (constructor: JavaConstructor): void => {
+    console.log("annotations: ", constructor.annotations);
+    console.log("keywords: ", constructor.keywords);
+    console.log("class name: ", constructor.className);
+    console.log("parameters: ", constructor.parameters);
+}

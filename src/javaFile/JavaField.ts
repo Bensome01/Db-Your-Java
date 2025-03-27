@@ -30,3 +30,11 @@ export const makeJavaField = (tokens: string[]): JavaField => {
 export const findJavaFields = (file: TokenizedLine[]): TokenizedLine[] => {
     return file.filter(line => !line.tokens.some(token => /\(/.test(token)) || line.tokens.some(token => token === "="));
 }
+
+export const printjavaField = (field: JavaField): void => {
+    console.log("annotations: ", field.annotations);
+    console.log("keywords: ", field.keywords);
+    console.log("field type: ", field.fieldType);
+    console.log("field name: ", field.fieldName);
+    console.log("field value: ", field.fieldValue);
+}

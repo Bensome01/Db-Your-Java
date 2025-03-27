@@ -1,6 +1,6 @@
 import { stripFileFromPath } from "../Parse/converter";
 import { printTokenizedFile, TokenizedLine } from "../Parse/tokenizedLine";
-import { makeJavaSchema, JavaSchema } from "./JavaSchema"
+import { makeJavaSchema, JavaSchema, printJavaSchema } from "./JavaSchema"
 
 const findFileName = (filePath: string): string => {
     const components: string[] = filePath.split('/');
@@ -33,4 +33,12 @@ export const makeJavaFile = (filePath: string): JavaFile => {
 
 export const getFullyQualifiedName = (file: JavaFile): string => {
     return file.package + "." + file.fileName;
+}
+
+export const printJavaFile = (file: JavaFile): void => {
+    console.log("file name: ", file.fileName);
+    console.log("package: ", file.package);
+    console.log("imports: ", file.imports);
+    console.log("JavaSchema");
+    printJavaSchema(file.fileClass);
 }

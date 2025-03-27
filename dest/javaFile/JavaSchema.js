@@ -1,12 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.makeJavaSchema = void 0;
+exports.printJavaSchema = exports.makeJavaSchema = void 0;
 const common_1 = require("./common");
 const JavaConstructor_1 = require("./JavaConstructor");
 const JavaField_1 = require("./JavaField");
 const JavaMethod_1 = require("./JavaMethod");
 const makeJavaSchema = (file) => {
-    console.log("Make JavaSchema");
     const mainSchema = file.at(0);
     const schemaName = findSchemaName(mainSchema.tokens);
     const mainSchemaContents = file.slice(1, -1);
@@ -112,3 +111,30 @@ const findNestedClasses = (file) => {
     }, { classBounds: [], classDepth: 0 }).classBounds;
     return nestedClassBounds;
 };
+const printJavaSchema = (schema) => {
+    console.log("schema name: ", schema.schemaName);
+    console.log("keywords: ", schema.keyWords);
+    console.log("parent: ", schema.parent);
+    console.log("interfaces: ", schema.interfaces);
+    console.log("fields");
+    schema.fields.forEach(field => (0, JavaField_1.printjavaField)(field));
+    console.log("constructors");
+    schema.constructors.forEach(constructor => (0, JavaConstructor_1.printJavaConstructor)(constructor));
+    console.log("methods");
+    schema.methods.forEach(method => (0, JavaMethod_1.printJavaMethod)(method));
+    console.log("nested classes");
+    schema.nestedClasses.forEach(nestedClass => {
+        console.log("nested class");
+        (0, exports.printJavaSchema)(nestedClass);
+    });
+    console.log("End of schema", schema.schemaName);
+};
+exports.printJavaSchema = printJavaSchema;
+// schemaName: string;
+// keyWords: string[];
+// parent: string;
+// interfaces: string[];
+// fields: JavaField[];
+// constructors: JavaConstructor[];
+// methods: JavaMethod[];
+// nestedClasses: JavaSchema[];

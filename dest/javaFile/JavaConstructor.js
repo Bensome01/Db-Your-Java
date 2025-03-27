@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findConstructors = exports.makeJavaConstructor = void 0;
+exports.printJavaConstructor = exports.findConstructors = exports.makeJavaConstructor = void 0;
 const common_1 = require("./common");
 /*
  * @annotations keywords className parameters {
@@ -21,3 +21,10 @@ const findConstructors = (file, className) => {
     return file.filter(line => line.tokens.some(token => token === className));
 };
 exports.findConstructors = findConstructors;
+const printJavaConstructor = (constructor) => {
+    console.log("annotations: ", constructor.annotations);
+    console.log("keywords: ", constructor.keywords);
+    console.log("class name: ", constructor.className);
+    console.log("parameters: ", constructor.parameters);
+};
+exports.printJavaConstructor = printJavaConstructor;

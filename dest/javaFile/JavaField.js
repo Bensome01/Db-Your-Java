@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findJavaFields = exports.makeJavaField = void 0;
+exports.printjavaField = exports.findJavaFields = exports.makeJavaField = void 0;
 const common_1 = require("./common");
 const makeJavaField = (tokens) => {
     const trimmedSemiColon = tokens.with(-1, tokens.at(-1).slice(0, -1));
@@ -20,3 +20,11 @@ const findJavaFields = (file) => {
     return file.filter(line => !line.tokens.some(token => /\(/.test(token)) || line.tokens.some(token => token === "="));
 };
 exports.findJavaFields = findJavaFields;
+const printjavaField = (field) => {
+    console.log("annotations: ", field.annotations);
+    console.log("keywords: ", field.keywords);
+    console.log("field type: ", field.fieldType);
+    console.log("field name: ", field.fieldName);
+    console.log("field value: ", field.fieldValue);
+};
+exports.printjavaField = printjavaField;

@@ -22,3 +22,11 @@ export const makeJavaMethod = (tokens: string[]): JavaMethod => {
         parameters: parameters
     };
 }
+
+export const printJavaMethod = (method: JavaMethod): void => {
+    console.log("annotations: ", method.annotations);
+    console.log("keywords: ", method.keywords);
+    console.log("return type: ", method.returnType);
+    console.log("method name: ", method.methodName);
+    console.log("parameters: ", method.parameters);
+}

@@ -1,8 +1,8 @@
 import { printTokenizedFile, TokenizedLine } from "../Parse/tokenizedLine";
 import { separateMethodFromParameter } from "./common";
-import { findConstructors, JavaConstructor, makeJavaConstructor } from "./JavaConstructor";
-import { findJavaFields, JavaField, makeJavaField } from "./JavaField"
-import { JavaMethod, makeJavaMethod } from "./JavaMethod";
+import { findConstructors, JavaConstructor, makeJavaConstructor, printJavaConstructor } from "./JavaConstructor";
+import { findJavaFields, JavaField, makeJavaField, printjavaField } from "./JavaField"
+import { JavaMethod, makeJavaMethod, printJavaMethod } from "./JavaMethod";
 
 type Range = {
     start: number;
@@ -22,8 +22,6 @@ export type JavaSchema =
 };
 
 export const makeJavaSchema = (file: TokenizedLine[]): JavaSchema => {
-    console.log("Make JavaSchema");
-
     const mainSchema: TokenizedLine = file.at(0)!;
 
     const schemaName = findSchemaName(mainSchema.tokens);
@@ -165,3 +163,31 @@ const findNestedClasses = (file: TokenizedLine[]): Range[] => {
 
     return nestedClassBounds;
 }
+
+export const printJavaSchema = (schema: JavaSchema): void => {
+    console.log("schema name: ", schema.schemaName);
+    console.log("keywords: ", schema.keyWords);
+    console.log("parent: ", schema.parent);
+    console.log("interfaces: ", schema.interfaces);
+    console.log("fields");
+    schema.fields.forEach(field => printjavaField(field));
+    console.log("constructors");
+    schema.constructors.forEach(constructor => printJavaConstructor(constructor));
+    console.log("methods");
+    schema.methods.forEach(method => printJavaMethod(method));
+    console.log("nested classes");
+    schema.nestedClasses.forEach(nestedClass => {
+        console.log("nested class");
+        printJavaSchema(nestedClass)
+    });
+    console.log("End of schema", schema.schemaName);
+}
+
+// schemaName: string;
+// keyWords: string[];
+// parent: string;
+// interfaces: string[];
+// fields: JavaField[];
+// constructors: JavaConstructor[];
+// methods: JavaMethod[];
+// nestedClasses: JavaSchema[];

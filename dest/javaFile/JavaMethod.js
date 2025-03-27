@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.makeJavaMethod = void 0;
+exports.printJavaMethod = exports.makeJavaMethod = void 0;
 const common_1 = require("./common");
 const makeJavaMethod = (tokens) => {
     const { annotations, annotationEnd } = (0, common_1.findAnnotations)(tokens);
@@ -14,3 +14,11 @@ const makeJavaMethod = (tokens) => {
     };
 };
 exports.makeJavaMethod = makeJavaMethod;
+const printJavaMethod = (method) => {
+    console.log("annotations: ", method.annotations);
+    console.log("keywords: ", method.keywords);
+    console.log("return type: ", method.returnType);
+    console.log("method name: ", method.methodName);
+    console.log("parameters: ", method.parameters);
+};
+exports.printJavaMethod = printJavaMethod;
