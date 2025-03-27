@@ -1,5 +1,5 @@
 import { stripFileFromPath } from "../Parse/converter";
-import { printTokenizedFile, TokenizedLine } from "../Parse/tokenizedLine";
+import { TokenizedLine } from "../Parse/tokenizedLine";
 import { makeJavaSchema, JavaSchema, printJavaSchema } from "./JavaSchema"
 
 const findFileName = (filePath: string): string => {

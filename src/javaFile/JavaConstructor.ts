@@ -1,5 +1,4 @@
 import { TokenizedLine } from "../Parse/tokenizedLine";
-import { annotations, keywords } from "../Parse/tokens";
 import { determineParameters, findAnnotations } from "./common";
 
 export type JavaConstructor = 

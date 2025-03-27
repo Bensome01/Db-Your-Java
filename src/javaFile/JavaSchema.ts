@@ -1,4 +1,4 @@
-import { printTokenizedFile, TokenizedLine } from "../Parse/tokenizedLine";
+import { TokenizedLine } from "../Parse/tokenizedLine";
 import { separateMethodFromParameter } from "./common";
 import { findConstructors, JavaConstructor, makeJavaConstructor, printJavaConstructor } from "./JavaConstructor";
 import { findJavaFields, JavaField, makeJavaField, printjavaField } from "./JavaField"

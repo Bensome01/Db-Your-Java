@@ -1,5 +1,4 @@
 import { readFileSync } from "node:fs";
-import { accessibilityModifiers, inheritance } from "./tokens";
 import { TokenizedLine, tokenizeLine } from "./tokenizedLine";
 
 export const stripFileFromPath = (filePath: string): TokenizedLine[] => {
