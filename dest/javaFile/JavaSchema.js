@@ -12,7 +12,6 @@ const makeJavaSchema = (file) => {
     const mainSchemaContents = file.slice(1, -1);
     const nestedClassBounds = findNestedClasses(mainSchemaContents);
     const excludeNestedClassContents = excludeContentInBounds(mainSchemaContents, nestedClassBounds);
-    console.log(excludeNestedClassContents);
     const javaFields = (0, JavaField_1.findJavaFields)(excludeNestedClassContents);
     const excludeJavaFields = excludeContentInBounds(excludeNestedClassContents, javaFields.map(line => {
         return { start: line.index, end: line.index };

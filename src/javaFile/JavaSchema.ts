@@ -32,7 +32,6 @@ export const makeJavaSchema = (file: TokenizedLine[]): JavaSchema => {
 
     const nestedClassBounds: Range[] = findNestedClasses(mainSchemaContents);
     const excludeNestedClassContents: TokenizedLine[] = excludeContentInBounds(mainSchemaContents, nestedClassBounds);
-    console.log(excludeNestedClassContents);
 
     const javaFields: TokenizedLine[] = findJavaFields(excludeNestedClassContents);
     const excludeJavaFields: TokenizedLine[] = excludeContentInBounds(excludeNestedClassContents,
