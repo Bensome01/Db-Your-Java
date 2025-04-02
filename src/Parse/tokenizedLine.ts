@@ -27,22 +27,31 @@ const reconnectTokens = (tokens: string[]): string[] => {
   const beginningRegex = new RegExp(combinedbeginnings, "g");
   const endingRegex = new RegExp(combinedEndings, "g");
 
-  const openContainers: string[] = [];
+  const reconnectedTokens = tokens.reduce(
+    (
+      reconnector: { tokens: string[]; containerDepth: number },
+      token
+    ): { tokens: string[]; containerDepth: number } => {
+      const reconnectedTokens =
+        reconnector.containerDepth === 0
+          ? reconnector.tokens.concat(token)
+          : reconnector.tokens.with(-1, tokens.at(-1) + " " + token);
 
-  const reconnectedTokens = tokens.reduce((tokens, token): string[] => {
-    const result: string[] =
-      reconnectTokens.length === 0 || openContainers.length === 0
-        ? tokens.concat(token)
-        : tokens.with(-1, tokens.at(-1) + " " + token);
+      const openContainer = token.match(beginningRegex);
+      const closedContainer = token.match(endingRegex);
 
-    const openContainer = token.match(beginningRegex);
-    openContainer?.forEach((container) => openContainers.push(container));
+      const openContainerCount =
+        openContainer === null ? 0 : openContainer.length;
+      const closedContainerCount =
+        closedContainer === null ? 0 : closedContainer.length;
 
-    const closedContainer = token.match(endingRegex);
-    closedContainer?.forEach((container) => openContainers.pop());
+      const containerDepth =
+        reconnector.containerDepth + openContainerCount - closedContainerCount;
 
-    return result;
-  }, [] as string[]);
+      return { tokens: reconnectedTokens, containerDepth: containerDepth };
+    },
+    { tokens: [], containerDepth: 0 }
+  ).tokens;
 
   return reconnectedTokens;
 };
