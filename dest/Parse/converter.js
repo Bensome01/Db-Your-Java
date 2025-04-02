@@ -4,37 +4,44 @@ exports.connectLines = exports.stripFileFromPath = void 0;
 const node_fs_1 = require("node:fs");
 const tokenizedLine_1 = require("./tokenizedLine");
 const stripFileFromPath = (filePath) => {
-    const rawFile = (0, node_fs_1.readFileSync)(filePath, 'utf8');
+    const rawFile = (0, node_fs_1.readFileSync)(filePath, "utf8");
     return stripFile(rawFile);
 };
 exports.stripFileFromPath = stripFileFromPath;
 const stripFile = (rawFile) => {
-    const separatedFile = rawFile.split('\n');
+    const separatedFile = rawFile.split("\n");
     return stripFileLines(separatedFile);
 };
 const stripFileLines = (lines) => {
     const trimmedLines = lines
-        .filter(line => line !== "")
-        .map(line => line.trim());
+        .filter((line) => line !== "")
+        .map((line) => line.trim());
     const uncommentedLines = removeComments(trimmedLines);
-    const reconnectedLines = (0, exports.connectLines)(uncommentedLines, [/{/, /}/, /;/]);
+    const reconnectedLines = (0, exports.connectLines)(uncommentedLines, [
+        /{/,
+        /}/,
+        /;/,
+    ]);
     const tokenizedLines = reconnectedLines.map((line, index) => (0, tokenizedLine_1.tokenizeLine)(line, index));
     const strippedFile = removeNonClassContent(tokenizedLines);
     return strippedFile;
 };
 const removeComments = (lines) => {
-    const removeComments = lines
-        .reduce((uncommenter, line) => {
+    const removeComments = lines.reduce((uncommenter, line) => {
         const uncommentedLine = uncommentLine(line, uncommenter.inComment);
         if (uncommentedLine.uncommentedLine === "") {
-            return { unCommentedLines: uncommenter.unCommentedLines, inComment: uncommentedLine.inComment };
+            return {
+                unCommentedLines: uncommenter.unCommentedLines,
+                inComment: uncommentedLine.inComment,
+            };
         }
         return {
-            unCommentedLines: uncommenter.unCommentedLines.concat([uncommentedLine.uncommentedLine]),
-            inComment: uncommentedLine.inComment
+            unCommentedLines: uncommenter.unCommentedLines.concat([
+                uncommentedLine.uncommentedLine,
+            ]),
+            inComment: uncommentedLine.inComment,
         };
-    }, { unCommentedLines: [], inComment: false })
-        .unCommentedLines;
+    }, { unCommentedLines: [], inComment: false }).unCommentedLines;
     return removeComments;
 };
 const uncommentLine = (line, inComment) => {
@@ -50,22 +57,24 @@ const uncommentLine = (line, inComment) => {
         const uncommentedLine = uncommentLine(line.slice(sectionCommentLocation), true);
         return {
             uncommentedLine: line.slice(0, sectionCommentLocation) + uncommentedLine.uncommentedLine,
-            inComment: uncommentedLine.inComment
+            inComment: uncommentedLine.inComment,
         };
     }
     const doubleLineLocation = line.indexOf("//");
     if (doubleLineLocation !== -1) {
-        return { uncommentedLine: line.slice(0, doubleLineLocation), inComment: false };
+        return {
+            uncommentedLine: line.slice(0, doubleLineLocation),
+            inComment: false,
+        };
     }
     return { uncommentedLine: line, inComment: false };
 };
 const removeNonClassContent = (lines) => {
-    const strippedLines = lines
-        .reduce((fileContent, line) => {
+    const strippedLines = lines.reduce((fileContent, line) => {
         const strippedLines = fileContent.nestedDepth === 0
             ? fileContent.strippedLines.concat([line])
             : fileContent.strippedLines;
-        const depth = line.tokens.some(token => token === "class" || token === "interface")
+        const depth = line.tokens.some((token) => token === "class" || token === "interface")
             ? fileContent.nestedDepth
             : line.tokens.reduce((depth, token) => {
                 const openBrackets = token.match(/{/g);
@@ -75,14 +84,14 @@ const removeNonClassContent = (lines) => {
                 return depth + openBracketsCount - closedBracketsCount;
             }, 0) + fileContent.nestedDepth;
         return { strippedLines: strippedLines, nestedDepth: Math.max(depth, 0) };
-    }, { strippedLines: [], nestedDepth: 0 })
-        .strippedLines;
+    }, { strippedLines: [], nestedDepth: 0 }).strippedLines;
     return strippedLines;
 };
 const connectLines = (lines, endings) => {
     const connectedLines = lines.reduce((connectedLines, line) => {
         const lastIndex = connectedLines.length - 1;
-        if (connectedLines.length == 0 || endings.some(ending => ending.test(connectedLines[lastIndex]))) {
+        if (connectedLines.length == 0 ||
+            endings.some((ending) => ending.test(connectedLines[lastIndex]))) {
             connectedLines.push(line);
         }
         else {
@@ -98,4 +107,4 @@ exports.connectLines = connectLines;
  * convert to text
  * regex
  * return result
- */ 
+ */

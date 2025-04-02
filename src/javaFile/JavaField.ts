@@ -1,3 +1,4 @@
+import { index } from "../utils";
 import { TokenizedLine } from "./../Parse/tokenizedLine";
 import { findAnnotations } from "./common";
 
@@ -10,7 +11,7 @@ export type JavaField = {
 };
 
 export const makeJavaField = (tokens: string[]): JavaField => {
-  const trimmedSemiColon = tokens.with(-1, tokens.at(-1)!.slice(0, -1));
+  const trimmedSemiColon = tokens.with(-1, index(tokens, -1).slice(0, -1));
 
   const { annotations, annotationEnd } = findAnnotations(trimmedSemiColon);
 
@@ -23,8 +24,8 @@ export const makeJavaField = (tokens: string[]): JavaField => {
   return {
     annotations: annotations,
     keywords: trimmedSemiColon.slice(annotationEnd, declarationEnd - 2),
-    fieldType: trimmedSemiColon.at(declarationEnd - 2)!,
-    fieldName: trimmedSemiColon.at(declarationEnd - 1)!,
+    fieldType: index(trimmedSemiColon, declarationEnd - 2),
+    fieldName: index(trimmedSemiColon, declarationEnd - 1),
     fieldValue:
       equalSignLocation === -1
         ? ""

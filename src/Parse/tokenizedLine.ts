@@ -18,6 +18,10 @@ export const tokenizeLine = (line: string, index: number): TokenizedLine => {
   return { tokens: reconnectedTokens, index: index };
 };
 
+/**
+ * splitting on ' ' will seperate Type<int, thing> and (Type param1, Type param2)
+ * this reconnects them into one token
+ */
 const reconnectTokens = (tokens: string[]): string[] => {
   const combinedbeginnings: string = combineRegexes(beginningContainers);
   const combinedEndings: string = combineRegexes(endingContainers);

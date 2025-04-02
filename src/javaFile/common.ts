@@ -1,5 +1,6 @@
 import { TokenizedLine } from "../Parse/tokenizedLine";
 import { genericAnnotation } from "../Parse/tokens";
+import { index } from "../utils";
 
 export const findAnnotations = (
   tokens: string[]
@@ -27,7 +28,7 @@ export const separateMethodFromParameter = (
     return line;
   }
 
-  const targetToken: string = line.tokens.at(methodNameLocation)!;
+  const targetToken: string = index(line.tokens, methodNameLocation);
   const separateLocation: number = targetToken.indexOf("(");
   const separatedTokens: string[] = [
     targetToken.slice(0, separateLocation),
@@ -61,7 +62,7 @@ export const determineParameters = (parameters: string): string[] => {
 
       if (reconnectedParameters.hasType) {
         return {
-          parameters: parameters.with(-1, parameters.at(-1)! + " " + token),
+          parameters: parameters.with(-1, index(parameters, -1) + " " + token),
           hasType: false,
         };
       }
@@ -91,7 +92,7 @@ const reconnectTypes = (parameters: string[]): string[] => {
         return {
           reconnectedParameters: reconnectedParameters.with(
             -1,
-            reconnectedParameters.at(-1)! + ", " + token
+            index(reconnectedParameters, -1) + ", " + token
           ),
           inTypeDeclaration: !/>/.test(token),
         };

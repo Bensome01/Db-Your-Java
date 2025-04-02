@@ -1,4 +1,5 @@
 import { TokenizedLine } from "../Parse/tokenizedLine";
+import { index } from "../utils";
 import { separateMethodFromParameter } from "./common";
 import {
   findConstructors,
@@ -32,7 +33,7 @@ export type JavaSchema = {
 };
 
 export const makeJavaSchema = (file: TokenizedLine[]): JavaSchema => {
-  const mainSchema: TokenizedLine = file.at(0)!;
+  const mainSchema: TokenizedLine = index(file, 0);
 
   const schemaName = findSchemaName(mainSchema.tokens);
 

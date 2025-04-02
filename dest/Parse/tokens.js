@@ -13,17 +13,10 @@ exports.combineRegexes = combineRegexes;
 exports.accessibilityModifiers = [
     /public/,
     /protected/,
-    /private/
+    /private/,
 ];
-exports.inheritance = [
-    /extends/,
-    /implements/
-];
-exports.loops = [
-    /for/,
-    /while/,
-    /do/
-];
+exports.inheritance = [/extends/, /implements/];
+exports.loops = [/for/, /while/, /do/];
 exports.nonAccessModifiers = [
     /static/,
     /final/,
@@ -31,17 +24,15 @@ exports.nonAccessModifiers = [
     /synchronized/,
     /volatile/,
     /transient/,
-    /native/
+    /native/,
 ];
-exports.genericAnnotation = [
-    /@\w+/
-];
+exports.genericAnnotation = [/@\w+/];
 exports.annotations = [
     /@Override/,
     /@SuppressWarnings/,
     /@Deprecated/,
     /@Safevarargs/,
-    /@FunctionalInterface/
+    /@FunctionalInterface/,
 ];
 exports.primitiveDataTypes = [
     /byte/,
@@ -51,20 +42,10 @@ exports.primitiveDataTypes = [
     /float/,
     /double/,
     /boolean/,
-    /char/
+    /char/,
 ];
-exports.beginningContainers = [
-    /</,
-    /\(/,
-    /{/,
-    /\[/
-];
-exports.endingContainers = [
-    />/,
-    /\)/,
-    /}/,
-    /\]/
-];
+exports.beginningContainers = [/</, /\(/, /{/, /\[/];
+exports.endingContainers = [/>/, /\)/, /}/, /\]/];
 exports.containers = exports.beginningContainers.concat(exports.endingContainers);
 exports.keywords = [
     /abstract/,
@@ -116,10 +97,10 @@ exports.keywords = [
     /try/,
     /void/,
     /volatile/,
-    /while/
+    /while/,
 ];
 /*
  * tokenizer
  * lexer
  * parser
- */ 
+ */

@@ -1,10 +1,11 @@
 import { stripFileFromPath } from "../Parse/converter";
 import { TokenizedLine } from "../Parse/tokenizedLine";
+import { index } from "../utils";
 import { makeJavaSchema, JavaSchema, printJavaSchema } from "./JavaSchema";
 
 const findFileName = (filePath: string): string => {
   const components: string[] = filePath.split("/");
-  return components.at(-1)!.slice(0, -5);
+  return index(components, -1).slice(0, -5);
 };
 
 export type JavaFile = {

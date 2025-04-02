@@ -1,17 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.printJavaMethod = exports.makeJavaMethod = void 0;
+const utils_1 = require("../utils");
 const common_1 = require("./common");
 const makeJavaMethod = (tokens) => {
     const { annotations, annotationEnd } = (0, common_1.findAnnotations)(tokens);
-    const endCurlyAdjustment = tokens.at(-1) === "{" ? -1 : 0;
-    const parameters = (0, common_1.determineParameters)(tokens.at(-1 + endCurlyAdjustment));
+    const endCurlyAdjustment = (0, utils_1.index)(tokens, -1) === "{" ? -1 : 0;
+    const parameters = (0, common_1.determineParameters)((0, utils_1.index)(tokens, -1 + endCurlyAdjustment));
     return {
         annotations: annotations,
         keywords: tokens.slice(annotationEnd, -3 + endCurlyAdjustment),
-        returnType: tokens.at(-3 + endCurlyAdjustment),
-        methodName: tokens.at(-2 + endCurlyAdjustment),
-        parameters: parameters
+        returnType: (0, utils_1.index)(tokens, -3 + endCurlyAdjustment),
+        methodName: (0, utils_1.index)(tokens, -2 + endCurlyAdjustment),
+        parameters: parameters,
     };
 };
 exports.makeJavaMethod = makeJavaMethod;

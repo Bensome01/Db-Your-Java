@@ -2,26 +2,31 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.determineParameters = exports.separateMethodFromParameter = exports.findAnnotations = void 0;
 const tokens_1 = require("../Parse/tokens");
+const utils_1 = require("../utils");
 const findAnnotations = (tokens) => {
-    const annotationEnd = tokens
-        .findIndex(token => !tokens_1.genericAnnotation
-        .some(annotation => annotation.test(token)));
+    const annotationEnd = tokens.findIndex((token) => !tokens_1.genericAnnotation.some((annotation) => annotation.test(token)));
     const annotations = tokens.slice(0, annotationEnd);
     return {
         annotations: annotations,
-        annotationEnd: annotationEnd
+        annotationEnd: annotationEnd,
     };
 };
 exports.findAnnotations = findAnnotations;
 const separateMethodFromParameter = (line) => {
-    const methodNameLocation = line.tokens.findIndex(token => /\(/.test(token));
+    const methodNameLocation = line.tokens.findIndex((token) => /\(/.test(token));
     if (methodNameLocation === -1) {
         return line;
     }
-    const targetToken = line.tokens.at(methodNameLocation);
+    const targetToken = (0, utils_1.index)(line.tokens, methodNameLocation);
     const separateLocation = targetToken.indexOf("(");
-    const separatedTokens = [targetToken.slice(0, separateLocation), targetToken.slice(separateLocation)];
-    return { tokens: line.tokens.toSpliced(methodNameLocation, 1, ...separatedTokens), index: line.index };
+    const separatedTokens = [
+        targetToken.slice(0, separateLocation),
+        targetToken.slice(separateLocation),
+    ];
+    return {
+        tokens: line.tokens.toSpliced(methodNameLocation, 1, ...separatedTokens),
+        index: line.index,
+    };
 };
 exports.separateMethodFromParameter = separateMethodFromParameter;
 const determineParameters = (parameters) => {
@@ -31,21 +36,19 @@ const determineParameters = (parameters) => {
     }
     const splitParameters = removedParenthesis.split(/, | /);
     const reconnectedTypes = reconnectTypes(splitParameters);
-    const reconnectedParameters = reconnectedTypes
-        .reduce((reconnectedParameters, token) => {
+    const reconnectedParameters = reconnectedTypes.reduce((reconnectedParameters, token) => {
         const parameters = reconnectedParameters.parameters;
         if (reconnectedParameters.hasType) {
             return {
-                parameters: parameters.with(-1, parameters.at(-1) + " " + token),
-                hasType: false
+                parameters: parameters.with(-1, (0, utils_1.index)(parameters, -1) + " " + token),
+                hasType: false,
             };
         }
         return {
             parameters: parameters.concat([token]),
-            hasType: true
+            hasType: true,
         };
-    }, { parameters: [], hasType: false })
-        .parameters;
+    }, { parameters: [], hasType: false }).parameters;
     return reconnectedParameters;
 };
 exports.determineParameters = determineParameters;
@@ -54,15 +57,13 @@ const reconnectTypes = (parameters) => {
         const reconnectedParameters = connector.reconnectedParameters;
         if (connector.inTypeDeclaration) {
             return {
-                reconnectedParameters: reconnectedParameters
-                    .with(-1, reconnectedParameters.at(-1) + ", " + token),
-                inTypeDeclaration: !/>/.test(token)
+                reconnectedParameters: reconnectedParameters.with(-1, (0, utils_1.index)(reconnectedParameters, -1) + ", " + token),
+                inTypeDeclaration: !/>/.test(token),
             };
         }
         return {
             reconnectedParameters: reconnectedParameters.concat([token]),
-            inTypeDeclaration: /</.test(token)
+            inTypeDeclaration: /</.test(token),
         };
-    }, { reconnectedParameters: [], inTypeDeclaration: false })
-        .reconnectedParameters;
+    }, { reconnectedParameters: [], inTypeDeclaration: false }).reconnectedParameters;
 };
