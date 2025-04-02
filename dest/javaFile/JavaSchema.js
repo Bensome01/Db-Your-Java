@@ -91,21 +91,28 @@ const findNestedClasses = (file) => {
     const nestedClassBounds = reIndexedFile.reduce((boundsFinder, line) => {
         const isClassDeclaration = line.tokens.some((token) => token === "class");
         const isClassCloser = line.tokens.every((token) => token === "}");
-        const classDepth = isClassDeclaration
-            ? boundsFinder.classDepth + 1
-            : isClassCloser
-                ? boundsFinder.classDepth - 1
-                : boundsFinder.classDepth;
-        const classBounds = isClassDeclaration
-            ? boundsFinder.classBounds.concat([
+        let classDepth = boundsFinder.classDepth;
+        if (isClassDeclaration) {
+            classDepth++;
+        }
+        else if (isClassCloser) {
+            classDepth--;
+        }
+        var classBounds;
+        if (isClassDeclaration) {
+            classBounds = boundsFinder.classBounds.concat([
                 { start: line.index, end: line.index },
-            ])
-            : isClassCloser && classDepth === 0
-                ? boundsFinder.classBounds.with(-1, {
-                    start: boundsFinder.classBounds.at(-1).start,
-                    end: line.index,
-                })
-                : boundsFinder.classBounds;
+            ]);
+        }
+        else if (isClassCloser && classDepth === 0) {
+            classBounds = boundsFinder.classBounds.with(-1, {
+                start: boundsFinder.classBounds.at(-1).start,
+                end: line.index,
+            });
+        }
+        else {
+            classBounds = boundsFinder.classBounds;
+        }
         return {
             classBounds: classBounds,
             classDepth: classDepth,
