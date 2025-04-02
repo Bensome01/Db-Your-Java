@@ -1,12 +1,14 @@
 import { findAllFilePaths } from "./filePath";
-import { JavaFile, makeJavaFile, } from "./javaFile/JavaFile";
+import { JavaFile, makeJavaFile } from "./javaFile/JavaFile";
 
 //Find All Files
-const filePath: string = './src/hidden/';
+const filePath: string = "./src/hidden/";
 const allFilePaths: string[] = findAllFilePaths(filePath);
 
 //map the file paths to the stripped contents
-const allFiles: JavaFile[] = allFilePaths.map(filePath => makeJavaFile(filePath));
+const allFiles: JavaFile[] = allFilePaths.map((filePath) =>
+  makeJavaFile(filePath)
+);
 
 //create FileTree of inheritance
 // const classLines: string[] = processedFiles.flatMap(file => )
