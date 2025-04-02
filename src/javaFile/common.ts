@@ -5,11 +5,11 @@ import { index } from "../utils";
 export const findAnnotations = (
   tokens: string[]
 ): { annotations: string[]; annotationEnd: number } => {
-  const annotationEnd: number = tokens.findIndex(
+  const annotationEnd = tokens.findIndex(
     (token) => !genericAnnotation.some((annotation) => annotation.test(token))
   );
 
-  const annotations: string[] = tokens.slice(0, annotationEnd);
+  const annotations = tokens.slice(0, annotationEnd);
 
   return {
     annotations: annotations,
@@ -20,17 +20,15 @@ export const findAnnotations = (
 export const separateMethodFromParameter = (
   line: TokenizedLine
 ): TokenizedLine => {
-  const methodNameLocation: number = line.tokens.findIndex((token) =>
-    /\(/.test(token)
-  );
+  const methodNameLocation = line.tokens.findIndex((token) => /\(/.test(token));
 
   if (methodNameLocation === -1) {
     return line;
   }
 
-  const targetToken: string = index(line.tokens, methodNameLocation);
-  const separateLocation: number = targetToken.indexOf("(");
-  const separatedTokens: string[] = [
+  const targetToken = index(line.tokens, methodNameLocation);
+  const separateLocation = targetToken.indexOf("(");
+  const separatedTokens = [
     targetToken.slice(0, separateLocation),
     targetToken.slice(separateLocation),
   ];
@@ -48,15 +46,15 @@ export const determineParameters = (parameters: string): string[] => {
     return [];
   }
 
-  const splitParameters: string[] = removedParenthesis.split(/, | /);
-  const reconnectedTypes: string[] = reconnectTypes(splitParameters);
+  const splitParameters = removedParenthesis.split(/, | /);
+  const reconnectedTypes = reconnectTypes(splitParameters);
 
   type reconnector = {
     parameters: string[];
     hasType: boolean;
   };
 
-  const reconnectedParameters: string[] = reconnectedTypes.reduce(
+  const reconnectedParameters = reconnectedTypes.reduce(
     (reconnectedParameters: reconnector, token: string): reconnector => {
       const parameters = reconnectedParameters.parameters;
 

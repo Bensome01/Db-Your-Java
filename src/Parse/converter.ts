@@ -2,38 +2,34 @@ import { readFileSync } from "node:fs";
 import { TokenizedLine, tokenizeLine } from "./tokenizedLine";
 
 export const stripFileFromPath = (filePath: string): TokenizedLine[] => {
-  const rawFile: string = readFileSync(filePath, "utf8");
+  const rawFile = readFileSync(filePath, "utf8");
 
   return stripFile(rawFile);
 };
 
 const stripFile = (rawFile: string): TokenizedLine[] => {
-  const separatedFile: string[] = rawFile.split("\n");
+  const separatedFile = rawFile.split("\n");
 
   return stripFileLines(separatedFile);
 };
 
 const stripFileLines = (lines: string[]): TokenizedLine[] => {
-  const trimmedLines: string[] = lines
+  const trimmedLines = lines
     .filter((line) => line !== "")
     .map((line) => line.trim());
-  const uncommentedLines: string[] = removeComments(trimmedLines);
-  const reconnectedLines: string[] = connectLines(uncommentedLines, [
-    /{/,
-    /}/,
-    /;/,
-  ]);
-  const tokenizedLines: TokenizedLine[] = reconnectedLines.map((line, index) =>
+  const uncommentedLines = removeComments(trimmedLines);
+  const reconnectedLines = connectLines(uncommentedLines, [/{/, /}/, /;/]);
+  const tokenizedLines = reconnectedLines.map((line, index) =>
     tokenizeLine(line, index)
   );
 
-  const strippedFile: TokenizedLine[] = removeNonClassContent(tokenizedLines);
+  const strippedFile = removeNonClassContent(tokenizedLines);
 
   return strippedFile;
 };
 
 const removeComments = (lines: string[]): string[] => {
-  const removeComments: string[] = lines.reduce(
+  const removeComments = lines.reduce(
     (
       uncommenter: { unCommentedLines: string[]; inComment: boolean },
       line: string
@@ -75,7 +71,7 @@ const uncommentLine = (
     return uncommentLine(line.slice(uncommentLocation + 2), false);
   }
 
-  const sectionCommentLocation: number = line.indexOf("/*");
+  const sectionCommentLocation = line.indexOf("/*");
 
   if (sectionCommentLocation !== -1) {
     const uncommentedLine = uncommentLine(
@@ -89,7 +85,7 @@ const uncommentLine = (
     };
   }
 
-  const doubleLineLocation: number = line.indexOf("//");
+  const doubleLineLocation = line.indexOf("//");
 
   if (doubleLineLocation !== -1) {
     return {
@@ -102,7 +98,7 @@ const uncommentLine = (
 };
 
 const removeNonClassContent = (lines: TokenizedLine[]): TokenizedLine[] => {
-  const strippedLines: TokenizedLine[] = lines.reduce(
+  const strippedLines = lines.reduce(
     (
       fileContent: { strippedLines: TokenizedLine[]; nestedDepth: number },
       line: TokenizedLine
@@ -112,16 +108,16 @@ const removeNonClassContent = (lines: TokenizedLine[]): TokenizedLine[] => {
           ? fileContent.strippedLines.concat([line])
           : fileContent.strippedLines;
 
-      const depth: number = line.tokens.some(
+      const depth = line.tokens.some(
         (token) => token === "class" || token === "interface"
       )
         ? fileContent.nestedDepth
         : line.tokens.reduce((depth, token): number => {
-            const openBrackets: string[] | null = token.match(/{/g);
+            const openBrackets = token.match(/{/g);
             const openBracketsCount =
               openBrackets === null ? 0 : openBrackets.length;
 
-            const closedBrackets: string[] | null = token.match(/}/g);
+            const closedBrackets = token.match(/}/g);
             const closedBracketsCount =
               closedBrackets === null ? 0 : closedBrackets.length;
 
@@ -137,7 +133,7 @@ const removeNonClassContent = (lines: TokenizedLine[]): TokenizedLine[] => {
 };
 
 export const connectLines = (lines: string[], endings: RegExp[]): string[] => {
-  const connectedLines: string[] = lines.reduce((connectedLines, line) => {
+  const connectedLines = lines.reduce((connectedLines, line) => {
     const lastIndex = connectedLines.length - 1;
     if (
       connectedLines.length == 0 ||

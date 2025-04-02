@@ -10,11 +10,7 @@ const combineRegexes = (regexes) => {
     }, "");
 };
 exports.combineRegexes = combineRegexes;
-exports.accessibilityModifiers = [
-    /public/,
-    /protected/,
-    /private/,
-];
+exports.accessibilityModifiers = [/public/, /protected/, /private/];
 exports.inheritance = [/extends/, /implements/];
 exports.loops = [/for/, /while/, /do/];
 exports.nonAccessModifiers = [

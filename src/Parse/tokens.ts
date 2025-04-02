@@ -8,17 +8,13 @@ export const combineRegexes = (regexes: RegExp[]): string => {
   }, "");
 };
 
-export const accessibilityModifiers: RegExp[] = [
-  /public/,
-  /protected/,
-  /private/,
-];
+export const accessibilityModifiers = [/public/, /protected/, /private/];
 
-export const inheritance: RegExp[] = [/extends/, /implements/];
+export const inheritance = [/extends/, /implements/];
 
-export const loops: RegExp[] = [/for/, /while/, /do/];
+export const loops = [/for/, /while/, /do/];
 
-export const nonAccessModifiers: RegExp[] = [
+export const nonAccessModifiers = [
   /static/,
   /final/,
   /abstract/,
@@ -28,9 +24,9 @@ export const nonAccessModifiers: RegExp[] = [
   /native/,
 ];
 
-export const genericAnnotation: RegExp[] = [/@\w+/];
+export const genericAnnotation = [/@\w+/];
 
-export const annotations: RegExp[] = [
+export const annotations = [
   /@Override/,
   /@SuppressWarnings/,
   /@Deprecated/,
@@ -38,7 +34,7 @@ export const annotations: RegExp[] = [
   /@FunctionalInterface/,
 ];
 
-export const primitiveDataTypes: RegExp[] = [
+export const primitiveDataTypes = [
   /byte/,
   /short/,
   /int/,
@@ -49,14 +45,14 @@ export const primitiveDataTypes: RegExp[] = [
   /char/,
 ];
 
-export const beginningContainers: RegExp[] = [/</, /\(/, /{/, /\[/];
+export const beginningContainers = [/</, /\(/, /{/, /\[/];
 
-export const endingContainers: RegExp[] = [/>/, /\)/, /}/, /\]/];
+export const endingContainers = [/>/, /\)/, /}/, /\]/];
 
 export const containers: RegExp[] =
   beginningContainers.concat(endingContainers);
 
-export const keywords: RegExp[] = [
+export const keywords = [
   /abstract/,
   /assert/,
   /boolean/,

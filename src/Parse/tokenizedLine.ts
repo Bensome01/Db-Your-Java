@@ -10,10 +10,8 @@ export type TokenizedLine = {
 };
 
 export const tokenizeLine = (line: string, index: number): TokenizedLine => {
-  const trimmedTokens: string[] = line
-    .split(" ")
-    .filter((token) => token !== "");
-  const reconnectedTokens: string[] = reconnectTokens(trimmedTokens);
+  const trimmedTokens = line.split(" ").filter((token) => token !== "");
+  const reconnectedTokens = reconnectTokens(trimmedTokens);
 
   return { tokens: reconnectedTokens, index: index };
 };
@@ -23,37 +21,34 @@ export const tokenizeLine = (line: string, index: number): TokenizedLine => {
  * this reconnects them into one token
  */
 const reconnectTokens = (tokens: string[]): string[] => {
-  const combinedbeginnings: string = combineRegexes(beginningContainers);
-  const combinedEndings: string = combineRegexes(endingContainers);
+  const combinedbeginnings = combineRegexes(beginningContainers);
+  const combinedEndings = combineRegexes(endingContainers);
 
-  const beginningRegex: RegExp = new RegExp(combinedbeginnings, "g");
-  const endingRegex: RegExp = new RegExp(combinedEndings, "g");
+  const beginningRegex = new RegExp(combinedbeginnings, "g");
+  const endingRegex = new RegExp(combinedEndings, "g");
 
   const openContainers: string[] = [];
 
-  const reconnectedTokens: string[] = tokens.reduce(
-    (tokens, token): string[] => {
-      const result: string[] =
-        reconnectTokens.length === 0 || openContainers.length === 0
-          ? tokens.concat(token)
-          : tokens.with(-1, tokens.at(-1) + " " + token);
+  const reconnectedTokens = tokens.reduce((tokens, token): string[] => {
+    const result: string[] =
+      reconnectTokens.length === 0 || openContainers.length === 0
+        ? tokens.concat(token)
+        : tokens.with(-1, tokens.at(-1) + " " + token);
 
-      const openContainer: string[] | null = token.match(beginningRegex);
-      openContainer?.forEach((container) => openContainers.push(container));
+    const openContainer = token.match(beginningRegex);
+    openContainer?.forEach((container) => openContainers.push(container));
 
-      const closedContainer: string[] | null = token.match(endingRegex);
-      closedContainer?.forEach((container) => openContainers.pop());
+    const closedContainer = token.match(endingRegex);
+    closedContainer?.forEach((container) => openContainers.pop());
 
-      return result;
-    },
-    [] as string[]
-  );
+    return result;
+  }, [] as string[]);
 
   return reconnectedTokens;
 };
 
 export const printTokenizedFile = (file: TokenizedLine[]): void => {
-  const rebuiltFile: string[] = file.map((line) =>
+  const rebuiltFile = file.map((line) =>
     line.tokens.reduce(
       (line: string, token: string): string => line + token + " ",
       ""

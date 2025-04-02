@@ -15,7 +15,7 @@ export const makeJavaField = (tokens: string[]): JavaField => {
 
   const { annotations, annotationEnd } = findAnnotations(trimmedSemiColon);
 
-  const equalSignLocation: number = trimmedSemiColon.findIndex(
+  const equalSignLocation = trimmedSemiColon.findIndex(
     (token) => token === "="
   );
   const declarationEnd: number =

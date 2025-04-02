@@ -17,11 +17,7 @@ const stripFileLines = (lines) => {
         .filter((line) => line !== "")
         .map((line) => line.trim());
     const uncommentedLines = removeComments(trimmedLines);
-    const reconnectedLines = (0, exports.connectLines)(uncommentedLines, [
-        /{/,
-        /}/,
-        /;/,
-    ]);
+    const reconnectedLines = (0, exports.connectLines)(uncommentedLines, [/{/, /}/, /;/]);
     const tokenizedLines = reconnectedLines.map((line, index) => (0, tokenizedLine_1.tokenizeLine)(line, index));
     const strippedFile = removeNonClassContent(tokenizedLines);
     return strippedFile;

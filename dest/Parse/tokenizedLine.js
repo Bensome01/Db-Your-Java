@@ -3,9 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.printTokenizedFile = exports.tokenizeLine = void 0;
 const tokens_1 = require("./tokens");
 const tokenizeLine = (line, index) => {
-    const trimmedTokens = line
-        .split(" ")
-        .filter((token) => token !== "");
+    const trimmedTokens = line.split(" ").filter((token) => token !== "");
     const reconnectedTokens = reconnectTokens(trimmedTokens);
     return { tokens: reconnectedTokens, index: index };
 };

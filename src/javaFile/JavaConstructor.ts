@@ -17,9 +17,9 @@ export type JavaConstructor = {
 export const makeJavaConstructor = (tokens: string[]): JavaConstructor => {
   const { annotations, annotationEnd } = findAnnotations(tokens);
 
-  const endCurlyAdjustment: number = index(tokens, -1) === "{" ? -1 : 0;
+  const endCurlyAdjustment = index(tokens, -1) === "{" ? -1 : 0;
 
-  const parameters: string[] = determineParameters(
+  const parameters = determineParameters(
     index(tokens, -1 + endCurlyAdjustment)
   );
 

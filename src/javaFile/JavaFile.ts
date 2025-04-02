@@ -4,7 +4,7 @@ import { index } from "../utils";
 import { makeJavaSchema, JavaSchema, printJavaSchema } from "./JavaSchema";
 
 const findFileName = (filePath: string): string => {
-  const components: string[] = filePath.split("/");
+  const components = filePath.split("/");
   return index(components, -1).slice(0, -5);
 };
 
@@ -16,7 +16,7 @@ export type JavaFile = {
 };
 
 export const makeJavaFile = (filePath: string): JavaFile => {
-  const tokenizedFile: TokenizedLine[] = stripFileFromPath(filePath);
+  const tokenizedFile = stripFileFromPath(filePath);
 
   return {
     fileName: findFileName(filePath),

@@ -33,40 +33,35 @@ export type JavaSchema = {
 };
 
 export const makeJavaSchema = (file: TokenizedLine[]): JavaSchema => {
-  const mainSchema: TokenizedLine = index(file, 0);
+  const mainSchema = index(file, 0);
 
   const schemaName = findSchemaName(mainSchema.tokens);
 
   const mainSchemaContents = file.slice(1, -1);
 
-  const nestedClassBounds: Range[] = findNestedClasses(mainSchemaContents);
-  const excludeNestedClassContents: TokenizedLine[] = excludeContentInBounds(
+  const nestedClassBounds = findNestedClasses(mainSchemaContents);
+  const excludeNestedClassContents = excludeContentInBounds(
     mainSchemaContents,
     nestedClassBounds
   );
 
-  const javaFields: TokenizedLine[] = findJavaFields(
-    excludeNestedClassContents
-  );
-  const excludeJavaFields: TokenizedLine[] = excludeContentInBounds(
+  const javaFields = findJavaFields(excludeNestedClassContents);
+  const excludeJavaFields = excludeContentInBounds(
     excludeNestedClassContents,
     javaFields.map((line, index) => {
       return { start: index, end: index };
     })
   ).map((line) => separateMethodFromParameter(line));
 
-  const javaConstructors: TokenizedLine[] = findConstructors(
-    excludeJavaFields,
-    schemaName
-  );
-  const excludeJavaConstructors: TokenizedLine[] = excludeContentInBounds(
+  const javaConstructors = findConstructors(excludeJavaFields, schemaName);
+  const excludeJavaConstructors = excludeContentInBounds(
     excludeJavaFields,
     javaConstructors.map((line, index) => {
       return { start: index, end: index };
     })
   );
 
-  const javaMethods: TokenizedLine[] = excludeJavaConstructors;
+  const javaMethods = excludeJavaConstructors;
 
   return {
     schema: mainSchema.tokens.find(
@@ -90,23 +85,21 @@ export const makeJavaSchema = (file: TokenizedLine[]): JavaSchema => {
 };
 
 const findSchemaName = (tokens: string[]): string => {
-  const SchemaKeywordLocation: number = tokens.findIndex(
+  const SchemaKeywordLocation = tokens.findIndex(
     (token) => token === "class" || token === "interface"
   );
   return tokens[SchemaKeywordLocation + 1];
 };
 
 const findSchemaKeywords = (tokens: string[]): string[] => {
-  const SchemaKeywordLocation: number = tokens.findIndex(
+  const SchemaKeywordLocation = tokens.findIndex(
     (token) => token === "class" || token === "interface"
   );
   return tokens.slice(0, SchemaKeywordLocation);
 };
 
 const findParentClass = (tokens: string[]): string => {
-  const extendsLocation: number = tokens.findIndex(
-    (token) => token === "extends"
-  );
+  const extendsLocation = tokens.findIndex((token) => token === "extends");
 
   if (extendsLocation == -1) {
     return "";
@@ -115,7 +108,7 @@ const findParentClass = (tokens: string[]): string => {
 };
 
 const findInterfaces = (tokens: string[]): string[] => {
-  const implementsLocation: number = tokens.findIndex(
+  const implementsLocation = tokens.findIndex(
     (token) => token === "implements"
   );
 
@@ -123,7 +116,7 @@ const findInterfaces = (tokens: string[]): string[] => {
     return [];
   }
 
-  const interfaces: string[] = tokens
+  const interfaces = tokens
     .slice(implementsLocation + 1, -1)
     .map((implemented) => {
       if (implemented.at(-1) === ",") {
@@ -168,31 +161,25 @@ const excludeContentInBounds = (
 };
 
 const findNestedClasses = (file: TokenizedLine[]): Range[] => {
-  const reIndexedFile: TokenizedLine[] = file.map(
-    (line, index): TokenizedLine => {
-      return { tokens: line.tokens, index: index };
-    }
-  );
+  const reIndexedFile = file.map((line, index): TokenizedLine => {
+    return { tokens: line.tokens, index: index };
+  });
 
   const nestedClassBounds = reIndexedFile.reduce(
     (
       boundsFinder: { classBounds: Range[]; classDepth: number },
       line
     ): { classBounds: Range[]; classDepth: number } => {
-      const isClassDeclaration: boolean = line.tokens.some(
-        (token) => token === "class"
-      );
-      const isClassCloser: boolean = line.tokens.every(
-        (token) => token === "}"
-      );
+      const isClassDeclaration = line.tokens.some((token) => token === "class");
+      const isClassCloser = line.tokens.every((token) => token === "}");
 
-      const classDepth: number = isClassDeclaration
+      const classDepth = isClassDeclaration
         ? boundsFinder.classDepth + 1
         : isClassCloser
         ? boundsFinder.classDepth - 1
         : boundsFinder.classDepth;
 
-      const classBounds: Range[] = isClassDeclaration
+      const classBounds = isClassDeclaration
         ? boundsFinder.classBounds.concat([
             { start: line.index, end: line.index },
           ])
