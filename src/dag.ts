@@ -10,34 +10,41 @@ type DagNode = {
   children: DagNode[];
 };
 
-export const makeDag = (file: JavaFile): DagNode => {
+export const makeDagHead = (): DagHead => {
+  return { roots: [] };
+};
+
+const makeDagNode = (file: JavaFile): DagNode => {
   return { node: file, children: [] };
 };
 
-export const addToDag = (file: JavaFile, dag: DagHead): DagNode | undefined => {
+/**
+ * adds a JavaFile to the DAG. Assumes that all necessary parents are in the DAG
+ */
+export const addToDag = (file: JavaFile, dag: DagHead): void => {
   const fileClass = file.fileClass;
   const extensions =
     fileClass.parent === ""
       ? fileClass.interfaces
       : fileClass.interfaces.concat([fileClass.parent]);
 
-  const parent = searchDag(file.fileName, dag);
+  if (extensions.length === 0) {
+    dag.roots.push(makeDagNode(file));
+    return;
+  }
 
-  parent?.children.push(makeDag(file));
+  const parentNodes = extensions.map((extension) => searchDag(extension, dag));
 
-  return parent;
+  if (parentNodes.some((node) => node === undefined)) {
+    throw new Error("DAG does not contain all necessary parent nodes");
+  }
+
+  const fileNode = makeDagNode(file);
+  parentNodes.forEach((parent) => parent!.children.push(fileNode));
 };
 
 export const dagContains = (fileName: string, dag: DagHead): boolean => {
   return searchDag(fileName, dag) !== undefined;
-};
-
-const combineDag = (
-  head1: DagHead,
-  head2: DagHead,
-  combinationNode: DagNode
-): DagHead => {
-  return { roots: [] };
 };
 
 const searchDag = (fileName: string, dag: DagHead): DagNode | undefined => {
