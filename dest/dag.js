@@ -1,37 +1,57 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.dagContains = exports.addToDag = exports.makeDagHead = void 0;
-const makeDagHead = () => {
-    return { roots: [] };
+exports.addToDag = exports.makeDag = void 0;
+const makeDag = (nodes, roots, comparer, GetKey = String) => {
+    return {
+        nodes: nodes,
+        roots: roots,
+        comparer: comparer,
+        getKey: GetKey,
+    };
 };
-exports.makeDagHead = makeDagHead;
-const makeDagNode = (file) => {
-    return { node: file, children: [] };
+exports.makeDag = makeDag;
+const makeDagNode = (item, key, children) => {
+    return {
+        value: item,
+        key: key,
+        children: children === undefined ? {} : children,
+    };
 };
 /**
- * adds a JavaFile to the DAG. Assumes that all necessary parents are in the DAG
+ * Adds the item to the DAG.
+ * Requires valid reverse ordering of items for insertion
+ * @param item The item to add
+ * @param dag The DAG to add the item to
  */
-const addToDag = (file, dag) => {
-    const fileClass = file.fileClass;
-    const extensions = fileClass.parent === ""
-        ? fileClass.interfaces
-        : fileClass.interfaces.concat([fileClass.parent]);
-    if (extensions.length === 0) {
-        dag.roots.push(makeDagNode(file));
-        return;
+//change to require strict ordering so that it can gain efficiency
+//consider void implementation instead
+const addToDag = (item, dag) => {
+    const id = dag.getKey(item);
+    if (dag.nodes[id] !== undefined) {
+        throw new Error(`item ${id} is already in the DAG`);
     }
-    const parentNodes = extensions.map((extension) => searchDag(extension, dag));
-    if (parentNodes.some((node) => node === undefined)) {
-        throw new Error("DAG does not contain all necessary parent nodes");
-    }
-    const fileNode = makeDagNode(file);
-    parentNodes.forEach((parent) => parent.children.push(fileNode));
+    const originalRoots = Object.values(dag.roots);
+    const keptRoots = originalRoots.filter((root) => !dag.comparer(item, dag.nodes[root].value));
+    const roots = keptRoots.length !== originalRoots.length || originalRoots.length === 0
+        ? keptRoots.concat([id]).reduce((set, root) => {
+            return { ...set, root };
+        }, {})
+        : keptRoots.reduce((set, root) => {
+            return { ...set, root };
+        }, {});
+    const node = makeDagNode(item, id);
+    return (0, exports.makeDag)(dag.nodes, roots, dag.comparer, dag.getKey);
 };
 exports.addToDag = addToDag;
-const dagContains = (fileName, dag) => {
-    return searchDag(fileName, dag) !== undefined;
+/**
+ * unimplemented
+ */
+const findLeaves = (dag) => {
+    return [];
 };
-exports.dagContains = dagContains;
-const searchDag = (fileName, dag) => {
+/**
+ * unimplemented
+ */
+const searchDag = (className, dag) => {
     return undefined;
 };

@@ -1,52 +1,96 @@
 import { JavaFile } from "./javaFile/JavaFile";
-import { inheritsFrom } from "./javaFile/JavaSchema";
+import { inheritsFrom, JavaSchema } from "./javaFile/JavaSchema";
 
-export type DagHead = {
-  roots: DagNode[];
+export type Dag<T> = {
+  nodes: HashMap<DagNode<T>>;
+  roots: HashMap<string>;
+  comparer: Compare<T>;
+  getKey: GetKey<T>;
 };
 
-type DagNode = {
-  node: JavaFile;
-  children: DagNode[];
+type Compare<T> = (item1: T, item2: T) => boolean;
+type GetKey<T> = (item: T) => string;
+
+type DagNode<T> = {
+  value: T;
+  key: string;
+  children: HashMap<DagNode<T>>;
 };
 
-export const makeDagHead = (): DagHead => {
-  return { roots: [] };
+type HashMap<T> = Record<string, T>;
+
+export const makeDag = <T>(
+  nodes: HashMap<DagNode<T>>,
+  roots: HashMap<string>,
+  comparer: Compare<T>,
+  GetKey: GetKey<T> = String
+): Dag<T> => {
+  return {
+    nodes: nodes,
+    roots: roots,
+    comparer: comparer,
+    getKey: GetKey,
+  };
 };
 
-const makeDagNode = (file: JavaFile): DagNode => {
-  return { node: file, children: [] };
+const makeDagNode = <T>(
+  item: T,
+  key: string,
+  children?: HashMap<DagNode<T>>
+): DagNode<T> => {
+  return {
+    value: item,
+    key: key,
+    children: children === undefined ? {} : children,
+  };
 };
 
 /**
- * adds a JavaFile to the DAG. Assumes that all necessary parents are in the DAG
+ * Adds the item to the DAG.
+ * Requires valid reverse ordering of items for insertion
+ * @param item The item to add
+ * @param dag The DAG to add the item to
  */
-export const addToDag = (file: JavaFile, dag: DagHead): void => {
-  const fileClass = file.fileClass;
-  const extensions =
-    fileClass.parent === ""
-      ? fileClass.interfaces
-      : fileClass.interfaces.concat([fileClass.parent]);
+//change to require strict ordering so that it can gain efficiency
+//consider void implementation instead
+export const addToDag = <T>(item: T, dag: Dag<T>): Dag<T> => {
+  const id = dag.getKey(item);
 
-  if (extensions.length === 0) {
-    dag.roots.push(makeDagNode(file));
-    return;
+  if (dag.nodes[id] !== undefined) {
+    throw new Error(`item ${id} is already in the DAG`);
   }
 
-  const parentNodes = extensions.map((extension) => searchDag(extension, dag));
+  const originalRoots = Object.values(dag.roots);
+  const keptRoots = originalRoots.filter(
+    (root) => !dag.comparer(item, dag.nodes[root].value)
+  );
+  const roots =
+    keptRoots.length !== originalRoots.length || originalRoots.length === 0
+      ? keptRoots.concat([id]).reduce((set, root): HashMap<string> => {
+          return { ...set, root };
+        }, {})
+      : keptRoots.reduce((set, root): HashMap<string> => {
+          return { ...set, root };
+        }, {});
 
-  if (parentNodes.some((node) => node === undefined)) {
-    throw new Error("DAG does not contain all necessary parent nodes");
-  }
+  const node = makeDagNode(item, id);
 
-  const fileNode = makeDagNode(file);
-  parentNodes.forEach((parent) => parent!.children.push(fileNode));
+  return makeDag(dag.nodes, roots, dag.comparer, dag.getKey);
 };
 
-export const dagContains = (fileName: string, dag: DagHead): boolean => {
-  return searchDag(fileName, dag) !== undefined;
+/**
+ * unimplemented
+ */
+const findLeaves = <T>(dag: Dag<T>): DagNode<T>[] => {
+  return [];
 };
 
-const searchDag = (fileName: string, dag: DagHead): DagNode | undefined => {
+/**
+ * unimplemented
+ */
+const searchDag = <T>(
+  className: string,
+  dag: Dag<T>
+): DagNode<T> | undefined => {
   return undefined;
 };
