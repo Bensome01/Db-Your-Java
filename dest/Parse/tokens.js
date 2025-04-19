@@ -84,7 +84,6 @@ exports.keywords = [
     /static/,
     /strictfp/,
     /super/,
-    /super/,
     /synchronised/,
     /this/,
     /throw/,
