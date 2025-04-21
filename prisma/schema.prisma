@@ -3,6 +3,81 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Class {
-  fully_qualified_name String @unique
+//a record represents either a class or interface
+model classes_and_interfaces {
+  id String @id @default(uuid())
+  name String
+  package String
+  imports classes_and_interfaces[] @relation("imports")
+  imported_by classes_and_interfaces[] @relation("imports")
+  accessibility_modifier accessibility_modifiers @default(package)
+  keywords keywords[]
+  class_or_interface class_or_interface
+  inherits_from classes_and_interfaces[] @relation("inheritance")
+  inherited_by classes_and_interfaces[] @relation("inheritance")
+  constructors         constructors[]
+  methods methods[]
+  variables variables[]
+}
+
+//a record represents a class field, method parameter, or constructor parameter
+model variables {
+  id String @id @default(uuid())
+  name String
+  type String
+  accessibility_modifier accessibility_modifiers @default(package)
+  value String?
+  keywords keywords[]
+  connect_to_class_or_interface classes_and_interfaces? @relation(fields: [class_or_interface_id], references: [id])
+  class_or_interface_id String?
+  connect_to_method methods? @relation(fields: [method_id], references: [id])
+  method_id String?
+  connect_to_constructor constructors? @relation(fields: [constructor_id], references: [id])
+  constructor_id String?
+}
+
+//a record represents a method in a class or interface
+model methods {
+  id String @id @default(uuid())
+  name String
+  accessibility_modifier accessibility_modifiers @default(package)
+  keywords keywords[]
+  parameters variables[]
+  return_type String
+  connect_to_class_or_interface classes_and_interfaces @relation(fields: [source_id], references: [id])
+  source_id String
+}
+
+//a record represents a constructor in a class
+model constructors {
+  id String @id @default(uuid())
+  accessibility_modifier accessibility_modifiers @default(package)
+  keywords keywords[]
+  connect_to_class_or_interface    classes_and_interfaces @relation(fields: [class_or_interface_id], references: [id])
+  class_or_interface_id String
+  parameters variables[]
+}
+
+//possible keywords for classes, interfaces, fields, constructors, and methods
+model keywords {
+  id String @id @default(uuid())
+  keyword String
+  connect_class_or_interface classes_and_interfaces[]
+  connect_field variables[]
+  connect_method methods[]
+  connect_constructor constructors[]
+}
+
+//to discern beetween classes and interfaces
+enum class_or_interface {
+  class
+  interface
+}
+
+//to represent accessibility modifiiers
+enum accessibility_modifiers {
+  public
+  private
+  protected
+  package
 }
