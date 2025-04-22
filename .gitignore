@@ -1,1 +1,7 @@
 /src/hidden
+/node_modules
+/prisma/migrations/*
+/generated/prisma
+.env
+
+!/prisma/migrations/migration_lock.toml
