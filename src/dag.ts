@@ -47,50 +47,47 @@ const makeDagNode = <T>(
 
 /**
  * Adds the item to the DAG.
- * Requires valid reverse ordering of items for insertion
- * @param item The item to add
  * @param dag The DAG to add the item to
+ * @param childList must be an adjacency list such that key (parent) -> values (children)
+ * @param item The item to add
  */
-//change to require strict ordering so that it can gain efficiency
-//consider void implementation instead
-export const addToDag = <T>(item: T, dag: Dag<T>): Dag<T> => {
-  const id = dag.getKey(item);
-
-  if (dag.nodes[id] !== undefined) {
-    throw new Error(`item ${id} is already in the DAG`);
+export const addToDag = <T>(
+  dag: Dag<T>,
+  childList: Record<string, T[]>,
+  item: T
+): void => {
+  const nodeKey = dag.getKey(item);
+  if (dag.nodes[nodeKey] !== undefined) {
+    return;
   }
 
-  const originalRoots = Object.values(dag.roots);
-  const keptRoots = originalRoots.filter(
-    (root) => !dag.comparer(item, dag.nodes[root].value)
-  );
-  const roots =
-    keptRoots.length !== originalRoots.length || originalRoots.length === 0
-      ? keptRoots.concat([id]).reduce((set, root): HashMap<string> => {
-          return { ...set, root };
-        }, {})
-      : keptRoots.reduce((set, root): HashMap<string> => {
-          return { ...set, root };
-        }, {});
+  //add all children
+  childList[nodeKey].forEach((child) => addToDag(dag, childList, child));
 
-  const node = makeDagNode(item, id);
+  //put children in HashMap
+  const children: HashMap<DagNode<T>> = {};
 
-  return makeDag(dag.nodes, roots, dag.comparer, dag.getKey);
+  childList[nodeKey].forEach((child) => {
+    const childKey = dag.getKey(child);
+    children[childKey] = dag.nodes[childKey];
+
+    if (dag.roots[childKey] !== undefined) {
+      delete dag.roots[childKey];
+    }
+  });
+
+  //add node
+  const node = makeDagNode(item, nodeKey, children);
+
+  dag.roots[nodeKey] = nodeKey;
+  dag.nodes[nodeKey] = node;
 };
 
 /**
  * unimplemented
  */
-const findLeaves = <T>(dag: Dag<T>): DagNode<T>[] => {
-  return [];
-};
+export const createTopologicalArray = <T>(dag: Dag<T>): T[] => {
+  const stack: T[] = [];
 
-/**
- * unimplemented
- */
-const searchDag = <T>(
-  className: string,
-  dag: Dag<T>
-): DagNode<T> | undefined => {
-  return undefined;
+  return stack;
 };
