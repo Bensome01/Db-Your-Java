@@ -13,5 +13,8 @@
     "@types/node": "^22.13.11",
     "prisma": "^6.6.0",
     "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.6.0"
   }
 }

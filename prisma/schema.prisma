@@ -3,6 +3,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+generator client {
+  provider = "prisma-client"
+  output = "../src/generated/prisma"
+}
+
 //a record represents either a class or interface
 model classes_and_interfaces {
   id String @id @default(uuid())

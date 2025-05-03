@@ -1,4 +1,5 @@
 /src/hidden
+/src/generated/prisma
 /node_modules
 /prisma/migrations/*
 /generated/prisma
